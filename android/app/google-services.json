@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "263099102553",
+    "project_id": "hookup-60ca0",
+    "storage_bucket": "hookup-60ca0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263099102553:android:4a5c0f7aa8fa55007e8848",
+        "android_client_info": {
+          "package_name": "com.coder.hookup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263099102553-bp5ocvteiu3c60sokvu57sqaevsfea9l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coder.hookup",
+            "certificate_hash": "260af5c0938a4d68862bd6aba0e089012b4b062b"
+          }
+        },
+        {
+          "client_id": "263099102553-t5nb05fcd7u2movshne4v9oand5mao9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCTFOuZIyBzQcgCLfr1DR103F30VeMaUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263099102553-t5nb05fcd7u2movshne4v9oand5mao9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
