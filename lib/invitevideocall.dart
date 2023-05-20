@@ -1,12 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:dapp/constants/app_constants.dart';
-import 'package:dapp/providers/coin_deduction_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
@@ -58,7 +55,7 @@ class CallInvitationPage extends StatelessWidget {
             barrierDismissible: false,
             builder: (BuildContext context) {
               return AlertDialog(
-                backgroundColor: Color(0xffC50808)!.withOpacity(0.3),
+                backgroundColor: const Color(0xffC50808)!.withOpacity(0.3),
                 title: const Text("End Video call",
                     style: TextStyle(color: Colors.white70)),
                 content: const Text("Do you want to exit?",
@@ -105,7 +102,10 @@ class CallInvitationPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            callButton(context, true),
+            SizedBox(
+                height: MediaQuery.of(context).size.height / 5,
+                width: MediaQuery.of(context).size.width / 2,
+                child: callButton(context, true)),
             const SizedBox(width: 10),
           ],
         ),
@@ -137,17 +137,16 @@ class CallInvitationPage extends StatelessWidget {
     return ZegoStartCallInvitationButton(
       isVideoCall: isVideoCall,
       invitees: invitees,
-      // buttonSize: const Size(50, 50),
       icon: ButtonIcon(
-          icon: Icon(
-        Icons.videocam,
-        color: Colors.white,
-        size: 38,
-      )),
+          icon: const Icon(Icons.video_call_rounded,
+              color: Colors.white, size: 38)),
+      text: "Press To Call",
+      textStyle: const TextStyle(
+          fontWeight: FontWeight.bold, color: Colors.white60, fontSize: 18),
       onPressed: (String code, String message, List<String> errorInvitees) {
         print("zegolcouddd2");
         starttime = DateTime.now();
-        print("iddds  $starttime");
+        print("Call Start Time =============> $starttime");
         if (errorInvitees.isNotEmpty) {
           String userIDs = "";
           for (int index = 0; index < errorInvitees.length; index++) {

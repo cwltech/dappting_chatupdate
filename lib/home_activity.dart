@@ -24,6 +24,7 @@ class _home extends State<home_home> {
       type: "user",
     ),
     profile_dashboard(),
+    // const ViewProfilePage(),
     myprofile(),
   ];
 

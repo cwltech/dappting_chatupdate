@@ -78,6 +78,7 @@ dependencies:
   flashy_tab_bar2: ^0.0.5
   blinking_text: ^1.0.2
   is_lock_screen: ^2.0.0
+  webview_flutter: ^3.0.1
 
 
   #zego_express_engine: ^2.22.0

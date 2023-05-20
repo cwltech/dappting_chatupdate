@@ -3,7 +3,6 @@ import 'package:dapp/loading_bar.dart';
 import 'package:dapp/payment_stripe.dart';
 import 'package:dapp/providers/package_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
-import 'package:dapp/providers/profile_provider.dart';
 import 'package:dapp/providers/regular_package_provider.dart';
 import 'package:dapp/providers/vip_package_provider.dart';
 import 'package:dapp/vipaccess.dart';
@@ -84,13 +83,13 @@ class _mybalance extends State<mybalance> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
                 ),
               ),
               backgroundColor: Colors.transparent,
-              title: Text.rich(
+              title: const Text.rich(
                 TextSpan(
                   children: [
                     TextSpan(

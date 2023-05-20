@@ -804,7 +804,7 @@ class _myprofile extends State<myprofile> {
 
           print("valuep$value");
           return value.map.length == 0 && !value.error
-              ? const CircularProgressIndicator()
+              ? Center(child: const CircularProgressIndicator())
               : value.error
                   ? const Text("Opps SOmething went wrong")
                   : value.map["data"]["userData"] != null

@@ -1,6 +1,6 @@
-# Datting Application
+# dapp
 
-A new flutter project.
+A new Flutter project.
 
 ## Getting Started
 

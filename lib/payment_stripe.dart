@@ -1,11 +1,10 @@
 import 'dart:convert';
+
 import 'package:dapp/constants/saveorderhistory.dart';
 import 'package:dapp/loading_bar.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
 
 Map<String, dynamic>? paymentIntentData;
 String transaction = '';
@@ -19,7 +18,7 @@ class payment_stripe {
           paymentSheetParameters: SetupPaymentSheetParameters(
               paymentIntentClientSecret: paymentIntentData!['client_secret'],
               // applePay: true,
-              googlePay: PaymentSheetGooglePay(merchantCountryCode: "91"),
+              googlePay: const PaymentSheetGooglePay(merchantCountryCode: "91"),
               style: ThemeMode.dark,
               merchantDisplayName: 'Hookup India'));
       displayPaymentSheet(context, user_id, type, plan_id);
@@ -72,7 +71,7 @@ class payment_stripe {
       saveorderhistory.orderhistory(
           context, user_id, transaction, plan_id, type, "1");
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Paid Successfully")));
+          .showSnackBar(const SnackBar(content: Text("Paid Successfully")));
       //Navigator.pop(context);
     } on StripeException catch (e) {
       print("StripeException${e.toString()}");
@@ -81,7 +80,7 @@ class payment_stripe {
       //     context, user_id, transaction, plan_id, type, "0");
       showDialog(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (_) => const AlertDialog(
                 content: Text("Cancelled"),
               ));
     }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dapp/models/host.list.model.dart';
 import 'package:dapp/providers/keyboard_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
 import 'package:dapp/wallet.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,10 +26,15 @@ import '../widgets/widgets.dart';
 import 'pages.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.arguments, required this.type})
+  const ChatPage(
+      {Key? key,
+      required this.chatUserListModel,
+      this.arguments,
+      required this.type})
       : super(key: key);
 
-  final ChatPageArguments arguments;
+  final ChatUserListModel chatUserListModel;
+  final ChatPageArguments? arguments;
   final type;
 
   @override
@@ -131,21 +136,22 @@ class ChatPageState extends State<ChatPage> {
   //   print("chatProvider ${FirestoreConstants.pathUserCollection}");
   // }
 
-  Future getImage() async {
-    ImagePicker imagePicker = ImagePicker();
-    PickedFile? pickedFile;
-
-    pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
-        setState(() {
-          isLoading = true;
-        });
-        uploadFile();
-      }
-    }
-  }
+  // TODO : Get Image Function
+  // Future getImage() async {
+  //   ImagePicker imagePicker = ImagePicker();
+  //   PickedFile? pickedFile;
+  //
+  //   pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     imageFile = File(pickedFile.path);
+  //     if (imageFile != null) {
+  //       setState(() {
+  //         isLoading = true;
+  //       });
+  //       uploadFile();
+  //     }
+  //   }
+  // }
 
   void getSticker() {
     giftProvider.gift_list();
@@ -158,7 +164,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   Widget gifts(int giftcount, var data, int selecteditem) {
-    print(" peerId$currentUserId");
+    print(" peerId =========> $currentUserId");
     context
         .read<profile_details_provider>()
         .profile_details_list(currentUserId ?? 'currentUserID');
@@ -205,13 +211,13 @@ class ChatPageState extends State<ChatPage> {
                               TypeMessage.sticker);
                           coin_deduction(
                               currentUserId ?? 'currentUserID',
-                              widget.arguments.peerId,
+                              widget.arguments!.peerId,
                               data["GiftList"][index]["gift_credit"],
                               "",
                               "virtual_gift");
                           chatingDetails(
                               currentUserId ?? 'currentUserID',
-                              widget.arguments.peerId,
+                              widget.arguments!.peerId,
                               "1",
                               data["GiftList"][index]["gift_image"],
                               data["GiftList"][index]["gift_id"].toString());
@@ -306,11 +312,11 @@ class ChatPageState extends State<ChatPage> {
             SharedPreferences pref = await SharedPreferences.getInstance();
             var gettingID = pref.getString(FirestoreConstants.id);
             var nickNameID = pref.getString(FirestoreConstants.nickname);
-            var recID = pref.getString(FirestoreConstants.content);
-            print("Receiver User ID ------------> $recID");
-
+            // var recID = pref.getString(FirestoreConstants.content);
+            print(
+                "Check Receiver User ID -------> ${widget.arguments!.peerId}");
             print("User Nickname --------------->$nickNameID");
-            print("Check User ID ---------------> $gettingID");
+            print("Check Sender User ID ---------------> $gettingID");
             print("resultt $mapRes");
           } else {}
         } catch (e) {
@@ -324,7 +330,7 @@ class ChatPageState extends State<ChatPage> {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
       chatProvider.sendMessage(content, type, groupChatId,
-          currentUserId ?? 'currentUserID', widget.arguments.peerId);
+          currentUserId ?? 'currentUserID', widget.arguments!.peerId);
       if (listScrollController.hasClients) {
         listScrollController.animateTo(0,
             duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -485,7 +491,7 @@ class ChatPageState extends State<ChatPage> {
                           ),
                           clipBehavior: Clip.hardEdge,
                           child: Image.network(
-                            widget.arguments.peerAvatar,
+                            widget.arguments!.peerAvatar,
                             loadingBuilder: (BuildContext context, Widget child,
                                 ImageChunkEvent? loadingProgress) {
                               if (loadingProgress == null) return child;
@@ -705,9 +711,9 @@ class ChatPageState extends State<ChatPage> {
           child: Material(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             clipBehavior: Clip.hardEdge,
-            child: widget.arguments.peerAvatar != null
+            child: widget.arguments!.peerAvatar != null
                 ? Image.network(
-                    widget.arguments.peerAvatar,
+                    widget.arguments!.peerAvatar,
                     fit: BoxFit.cover,
                     width: 40,
                     height: 40,
@@ -745,15 +751,15 @@ class ChatPageState extends State<ChatPage> {
         ),
         title: Row(
           children: [
-            Text(
-              widget.arguments.peerNickname,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
+            // Text(
+            //   widget.arguments!.peerNickname,
+            //   style: const TextStyle(
+            //     fontSize: 14,
+            //   ),
+            // ),
             SizedBox(width: 5),
             Text(
-              widget.arguments.peerId,
+              widget.arguments!.peerId,
               style: const TextStyle(
                 fontSize: 14,
               ),
@@ -1006,10 +1012,14 @@ class ChatPageState extends State<ChatPage> {
         var userID = pref.getString(FirestoreConstants.id);
 
         print("User ID From Share ---------> $userID");
+        print("User To -----------> ${widget.arguments!.peerId}");
         print("Message =========> ${TypeMessage.text}");
-
-        chatingDetails(userID.toString(), widget.arguments.peerId,
+        print("Message Print -------------> ${textEditingController.text}");
+        chatingDetails(userID.toString(), widget.arguments!.peerId,
             TypeMessage.text.toString(), textEditingController.text, "");
+        setState(() {
+          textEditingController.clear();
+        });
       }
     }
 
@@ -1021,18 +1031,18 @@ class ChatPageState extends State<ChatPage> {
                 top: BorderSide(color: ColorConstants.greyColor2, width: 0.5)),
             color: Colors.white),
         child: Row(children: <Widget>[
-          // TODO : Button send image
-          Material(
-            color: Colors.white,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 1),
-              child: IconButton(
-                icon: const Icon(Icons.image),
-                onPressed: getImage,
-                color: ColorConstants.primaryColor,
-              ),
-            ),
-          ),
+          // TODO : Button Send Image Button
+          // Material(
+          //   color: Colors.white,
+          //   child: Container(
+          //     margin: const EdgeInsets.symmetric(horizontal: 1),
+          //     child: IconButton(
+          //       icon: const Icon(Icons.image),
+          //       onPressed: getImage,
+          //       color: ColorConstants.primaryColor,
+          //     ),
+          //   ),
+          // ),
 
           Material(
             color: Colors.white,
@@ -1099,7 +1109,7 @@ class ChatPageState extends State<ChatPage> {
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   listMessage = snapshot.data!.docs;
-                  if (listMessage.length > 0) {
+                  if (listMessage.isNotEmpty) {
                     return ListView.builder(
                       padding: const EdgeInsets.all(10),
                       itemBuilder: (context, index) =>
@@ -1132,10 +1142,11 @@ class ChatPageState extends State<ChatPage> {
 class ChatPageArguments {
   final String peerId;
   final String peerAvatar;
-  final String peerNickname;
+  // final String peerNickname;
 
-  ChatPageArguments(
-      {required this.peerId,
-      required this.peerAvatar,
-      required this.peerNickname});
+  ChatPageArguments({
+    required this.peerId,
+    required this.peerAvatar,
+    // required this.peerNickname
+  });
 }

@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dapp/login.dart';
+import 'package:dapp/models/host.list.model.dart';
+import 'package:dapp/providers/profile_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -16,12 +17,12 @@ import '../models/models.dart';
 import '../providers/auth_provider.dart';
 import '../providers/home_provider.dart';
 import '../utils/debouncer.dart';
-import '../utils/utilities.dart';
 import '../widgets/widgets.dart';
 import 'pages.dart';
 
 class chat_home_list extends StatefulWidget {
   final type;
+
   chat_home_list({Key? key, this.type}) : super(key: key);
 
   @override
@@ -41,7 +42,7 @@ class HomePageState extends State<chat_home_list> {
   int _limitIncrement = 20;
   String _textSearch = "";
   bool isLoading = false;
-
+  var user_id;
   late AuthProvider authProvider;
   late String currentUserId;
   late HomeProvider homeProvider;
@@ -145,7 +146,7 @@ class HomePageState extends State<chat_home_list> {
       priority: Priority.high,
     );
     DarwinNotificationDetails iOSPlatformChannelSpecifics =
-        DarwinNotificationDetails();
+        const DarwinNotificationDetails();
     NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
@@ -178,26 +179,26 @@ class HomePageState extends State<chat_home_list> {
             children: <Widget>[
               Container(
                 color: ColorConstants.themeColor,
-                padding: EdgeInsets.only(bottom: 10, top: 10),
+                padding: const EdgeInsets.only(bottom: 10, top: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                      child: Icon(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: const Icon(
                         Icons.exit_to_app,
                         size: 30,
                         color: Colors.white,
                       ),
-                      margin: EdgeInsets.only(bottom: 10),
                     ),
-                    Text(
+                    const Text(
                       'Exit app',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       'Are you sure to exit app?',
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
@@ -211,13 +212,13 @@ class HomePageState extends State<chat_home_list> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                      child: Icon(
+                      margin: const EdgeInsets.only(right: 10),
+                      child: const Icon(
                         Icons.cancel,
                         color: ColorConstants.primaryColor,
                       ),
-                      margin: EdgeInsets.only(right: 10),
                     ),
-                    Text(
+                    const Text(
                       'Cancel',
                       style: TextStyle(
                           color: ColorConstants.primaryColor,
@@ -233,13 +234,13 @@ class HomePageState extends State<chat_home_list> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                      child: Icon(
+                      margin: const EdgeInsets.only(right: 10),
+                      child: const Icon(
                         Icons.check_circle,
                         color: ColorConstants.primaryColor,
                       ),
-                      margin: EdgeInsets.only(right: 10),
                     ),
-                    Text(
+                    const Text(
                       'Yes',
                       style: TextStyle(
                           color: ColorConstants.primaryColor,
@@ -274,7 +275,7 @@ class HomePageState extends State<chat_home_list> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text(
+        title: const Text(
           "Message",
           style: TextStyle(
               fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black),
@@ -298,45 +299,97 @@ class HomePageState extends State<chat_home_list> {
               children: [
                 buildSearchBar(),
                 Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: homeProvider.getStreamFireStore(
-                        widget.type == "user"
-                            ? FirestoreConstants.pathUservendorCollection
-                            : FirestoreConstants.pathUserCollection,
-                        _limit,
-                        _textSearch),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasData) {
-                        if ((snapshot.data?.docs.length ?? 0) > 0) {
-                          return ListView.builder(
-                            padding: EdgeInsets.all(10),
-                            itemBuilder: (context, index) =>
-                                buildItem(context, snapshot.data?.docs[index]),
-                            itemCount: snapshot.data?.docs.length,
-                            controller: listScrollController,
-                          );
-                        } else {
-                          return Center(
-                            child: Text("No users"),
-                          );
-                        }
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: ColorConstants.themeColor,
-                          ),
-                        );
-                      }
+                  child: Consumer<hostlist_provider>(
+                    builder: (context, state, child) {
+                      return state.map["data"]["HostList"] != null
+                          ? ListView.builder(
+                              itemCount: state.map["data"]["HostList"].length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                  // TODO : Navigation To Chat Page
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                          chatUserListModel: ChatUserListModel(
+                                            data: Data(
+                                              hostList: <HostList>[
+                                                state.map["data"]["HostList"]
+                                                    ["user_id"]
+                                              ],
+                                            ),
+                                          ),
+                                          type: widget.type,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  title: Text(
+                                    state.map["data"]["HostList"][index]
+                                        ["name"],
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(state.map["data"]["HostList"]
+                                      [index]["last_message"]),
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        state.map["data"]["HostList"][index]
+                                            ["profile_image"]),
+                                  ),
+                                  trailing: Text(state.map["data"]["HostList"]
+                                          [index]["user_id"]
+                                      .toString()),
+                                );
+                              })
+                          : const Center(
+                              child: CircularProgressIndicator(),
+                            );
                     },
                   ),
                 ),
+                // Expanded(
+                //   child: StreamBuilder<QuerySnapshot>(
+                //     stream: homeProvider.getStreamFireStore(
+                //         widget.type == "user"
+                //             ? FirestoreConstants.pathUservendorCollection
+                //             : FirestoreConstants.pathUserCollection,
+                //         _limit,
+                //         _textSearch),
+                //     builder: (BuildContext context,
+                //         AsyncSnapshot<QuerySnapshot> snapshot) {
+                //       if (snapshot.hasData) {
+                //         if ((snapshot.data?.docs.length ?? 0) > 0) {
+                //           return ListView.builder(
+                //             padding: const EdgeInsets.all(10),
+                //             itemBuilder: (context, index) =>
+                //                 buildItem(context, snapshot.data?.docs[index]),
+                //             itemCount: snapshot.data?.docs.length,
+                //             controller: listScrollController,
+                //           );
+                //         } else {
+                //           return const Center(
+                //             child: Text("No users"),
+                //           );
+                //         }
+                //       } else {
+                //         return const Center(
+                //           child: CircularProgressIndicator(
+                //             color: ColorConstants.themeColor,
+                //           ),
+                //         );
+                //       }
+                //     },
+                //   ),
+                // ),
               ],
             ),
 
             // Loading
             Positioned(
-              child: isLoading ? LoadingView() : SizedBox.shrink(),
+              child: isLoading ? LoadingView() : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -349,11 +402,17 @@ class HomePageState extends State<chat_home_list> {
   Widget buildSearchBar() {
     return Container(
       height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: ColorConstants.greyColor2,
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.search, color: ColorConstants.greyColor, size: 20),
-          SizedBox(width: 5),
+          const Icon(Icons.search, color: ColorConstants.greyColor, size: 20),
+          const SizedBox(width: 5),
           Expanded(
             child: TextFormField(
               textInputAction: TextInputAction.search,
@@ -373,12 +432,12 @@ class HomePageState extends State<chat_home_list> {
                   }
                 });
               },
-              decoration: InputDecoration.collapsed(
+              decoration: const InputDecoration.collapsed(
                 hintText: 'Search nickname (you have to type exactly string)',
                 hintStyle:
                     TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
-              style: TextStyle(fontSize: 13),
+              style: const TextStyle(fontSize: 13),
             ),
           ),
           StreamBuilder<bool>(
@@ -393,18 +452,12 @@ class HomePageState extends State<chat_home_list> {
                             _textSearch = "";
                           });
                         },
-                        child: Icon(Icons.clear_rounded,
+                        child: const Icon(Icons.clear_rounded,
                             color: ColorConstants.greyColor, size: 20))
-                    : SizedBox.shrink();
+                    : const SizedBox.shrink();
               }),
         ],
       ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: ColorConstants.greyColor2,
-      ),
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
     );
   }
 
@@ -426,7 +479,7 @@ class HomePageState extends State<chat_home_list> {
                   ),
                   Text(
                     choice.title,
-                    style: TextStyle(color: ColorConstants.primaryColor),
+                    style: const TextStyle(color: ColorConstants.primaryColor),
                   ),
                 ],
               ));
@@ -435,120 +488,206 @@ class HomePageState extends State<chat_home_list> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot? document) {
-    if (document != null) {
-      UserChat userChat = UserChat.fromDocument(document);
-      if (userChat.id == currentUserId) {
-        return SizedBox.shrink();
-      } else {
-        return Container(
-          child: TextButton(
-            child: Row(
-              children: <Widget>[
-                Material(
-                  child: userChat.photoUrl.isNotEmpty
-                      ? Image.network(
-                          userChat.photoUrl,
-                          fit: BoxFit.cover,
-                          width: 50,
-                          height: 50,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              width: 50,
-                              height: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorConstants.themeColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, object, stackTrace) {
-                            return Icon(
-                              Icons.account_circle,
-                              size: 50,
-                              color: ColorConstants.greyColor,
-                            );
-                          },
-                        )
-                      : Icon(
-                          Icons.account_circle,
-                          size: 50,
-                          color: ColorConstants.greyColor,
-                        ),
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  clipBehavior: Clip.hardEdge,
-                ),
-                Flexible(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            'Nickname: ${userChat.nickname}',
-                            maxLines: 1,
-                            style:
-                                TextStyle(color: ColorConstants.primaryColor),
-                          ),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
-                        ),
-                        Container(
-                          child: Text(
-                            'About me: ${userChat.aboutMe}',
-                            maxLines: 1,
-                            style:
-                                TextStyle(color: ColorConstants.primaryColor),
-                          ),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        )
-                      ],
-                    ),
-                    margin: EdgeInsets.only(left: 20),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              if (Utilities.isKeyboardShowing()) {
-                Utilities.closeKeyboard(context);
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                    arguments: ChatPageArguments(
-                      peerId: userChat.id,
-                      peerAvatar: userChat.photoUrl,
-                      peerNickname: userChat.nickname,
-                    ),
-                    type: widget.type,
-                  ),
-                ),
-              );
-            },
-            style: ButtonStyle(
-              //backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
-              shape: MaterialStateProperty.all<OutlinedBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-              ),
-            ),
-          ),
-          margin: EdgeInsets.only(bottom: 10, left: 5, right: 5),
-        );
-      }
-    } else {
-      return SizedBox.shrink();
-    }
-  }
+// Widget chatMessageItme(BuildContext context, snapshot){
+//   if(snapshot!=null){
+//     ChatUserListModel chatUserListModel = ChatUserListModel.fromJson(snapshot);
+//     if(chatUserListModel.data?.hostList?.first.userId !=null){
+//       return const SizedBox.shrink();
+//     }else{return Container(
+//       color: Colors.amber,
+//       margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
+//       child: TextButton(
+//         onPressed: () {
+//           if (Utilities.isKeyboardShowing()) {
+//             Utilities.closeKeyboard(context);
+//           }
+//           Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (context) => ChatPage(
+//                 arguments: ChatPageArguments(
+//                   peerId: chatUserListModel.data!.hostList!.first.userId.toString(),
+//                   peerAvatar: chatUserListModel.data!.hostList!.first.profileImage.toString(),
+//
+//                 ),
+//                 type: widget.type,
+//               ),
+//             ),
+//           );
+//         },
+//         style: ButtonStyle(
+//           //backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
+//           shape: MaterialStateProperty.all<OutlinedBorder>(
+//             const RoundedRectangleBorder(
+//               borderRadius: BorderRadius.all(Radius.circular(10)),
+//             ),
+//           ),
+//         ),
+//         child: Row(
+//           children: <Widget>[
+//             Material(
+//               borderRadius: const BorderRadius.all(Radius.circular(25)),
+//               clipBehavior: Clip.hardEdge,
+//               child: userChat.photoUrl.isNotEmpty
+//                   ? Image.network(
+//                 userChat.photoUrl,
+//                 fit: BoxFit.cover,
+//                 width: 50,
+//                 height: 50,
+//                 loadingBuilder: (BuildContext context, Widget child,
+//                     ImageChunkEvent? loadingProgress) {
+//                   if (loadingProgress == null) return child;
+//                   return Container(
+//                     width: 50,
+//                     height: 50,
+//                     child: Center(
+//                       child: CircularProgressIndicator(
+//                         color: ColorConstants.themeColor,
+//                         value: loadingProgress.expectedTotalBytes !=
+//                             null
+//                             ? loadingProgress.cumulativeBytesLoaded /
+//                             loadingProgress.expectedTotalBytes!
+//                             : null,
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 errorBuilder: (context, object, stackTrace) {
+//                   return const Icon(
+//                     Icons.account_circle,
+//                     size: 50,
+//                     color: ColorConstants.greyColor,
+//                   );
+//                 },
+//               )
+//                   : const Icon(
+//                 Icons.account_circle,
+//                 size: 50,
+//                 color: ColorConstants.greyColor,
+//               ),
+//             ),
+//
+//           ],
+//         ),
+//       ),
+//     );}
+//   }
+// }
+// Widget buildItem(BuildContext context, DocumentSnapshot? document) {
+//   if (document != null) {
+//     UserChat userChat = UserChat.fromDocument(document);
+//     if (userChat.id == currentUserId) {
+//       return const SizedBox.shrink();
+//     } else {
+//       return Container(
+//         color: Colors.amber,
+//         margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
+//         child: TextButton(
+//           onPressed: () {
+//             if (Utilities.isKeyboardShowing()) {
+//               Utilities.closeKeyboard(context);
+//             }
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => ChatPage(
+//                   arguments: ChatPageArguments(
+//                     peerId: userChat.id,
+//                     peerAvatar: userChat.photoUrl,
+//                     // peerNickname: userChat.nickname,
+//                   ),
+//                   type: widget.type,
+//                 ),
+//               ),
+//             );
+//           },
+//           style: ButtonStyle(
+//             //backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
+//             shape: MaterialStateProperty.all<OutlinedBorder>(
+//               const RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.all(Radius.circular(10)),
+//               ),
+//             ),
+//           ),
+//           child: Row(
+//             children: <Widget>[
+//               Material(
+//                 borderRadius: const BorderRadius.all(Radius.circular(25)),
+//                 clipBehavior: Clip.hardEdge,
+//                 child: userChat.photoUrl.isNotEmpty
+//                     ? Image.network(
+//                         userChat.photoUrl,
+//                         fit: BoxFit.cover,
+//                         width: 50,
+//                         height: 50,
+//                         loadingBuilder: (BuildContext context, Widget child,
+//                             ImageChunkEvent? loadingProgress) {
+//                           if (loadingProgress == null) return child;
+//                           return Container(
+//                             width: 50,
+//                             height: 50,
+//                             child: Center(
+//                               child: CircularProgressIndicator(
+//                                 color: ColorConstants.themeColor,
+//                                 value: loadingProgress.expectedTotalBytes !=
+//                                         null
+//                                     ? loadingProgress.cumulativeBytesLoaded /
+//                                         loadingProgress.expectedTotalBytes!
+//                                     : null,
+//                               ),
+//                             ),
+//                           );
+//                         },
+//                         errorBuilder: (context, object, stackTrace) {
+//                           return const Icon(
+//                             Icons.account_circle,
+//                             size: 50,
+//                             color: ColorConstants.greyColor,
+//                           );
+//                         },
+//                       )
+//                     : const Icon(
+//                         Icons.account_circle,
+//                         size: 50,
+//                         color: ColorConstants.greyColor,
+//                       ),
+//               ),
+//               Flexible(
+//                 child: Container(
+//                   margin: const EdgeInsets.only(left: 20),
+//                   child: Column(
+//                     children: <Widget>[
+//                       Container(
+//                         alignment: Alignment.centerLeft,
+//                         margin: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+//                         child: Text(
+//                           'Nickname: ${userChat.nickname}',
+//                           maxLines: 1,
+//                           style: const TextStyle(
+//                               color: ColorConstants.primaryColor),
+//                         ),
+//                       ),
+//                       Container(
+//                         alignment: Alignment.centerLeft,
+//                         margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+//                         child: Text(
+//                           'About me: ${userChat.aboutMe}',
+//                           maxLines: 1,
+//                           style: const TextStyle(
+//                               color: ColorConstants.primaryColor),
+//                         ),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     }
+//   } else {
+//     return const SizedBox.shrink();
+//   }
+// }
 }
