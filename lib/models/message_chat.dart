@@ -33,6 +33,11 @@ class MessageChat {
     String timestamp = doc.get(FirestoreConstants.timestamp);
     String content = doc.get(FirestoreConstants.content);
     int type = doc.get(FirestoreConstants.type);
-    return MessageChat(idFrom: idFrom, idTo: idTo, timestamp: timestamp, content: content, type: type);
+    return MessageChat(
+        idFrom: idFrom,
+        idTo: idTo,
+        timestamp: timestamp,
+        content: content,
+        type: type);
   }
 }

@@ -2,17 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dapp/login.dart';
-import 'package:dapp/models/host.list.model.dart';
 import 'package:dapp/providers/profile_provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/color_constants.dart';
-import '../constants/firestore_constants.dart';
 import '../models/models.dart';
 import '../providers/auth_provider.dart';
 import '../providers/home_provider.dart';
@@ -23,7 +17,7 @@ import 'pages.dart';
 class chat_home_list extends StatefulWidget {
   final type;
 
-  chat_home_list({Key? key, this.type}) : super(key: key);
+  const chat_home_list({Key? key, this.type}) : super(key: key);
 
   @override
   State createState() => HomePageState();
@@ -32,10 +26,6 @@ class chat_home_list extends StatefulWidget {
 class HomePageState extends State<chat_home_list> {
   HomePageState({Key? key});
 
-  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
 
   int _limit = 20;
@@ -56,54 +46,10 @@ class HomePageState extends State<chat_home_list> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    authProvider = context.read<AuthProvider>();
-    homeProvider = context.read<HomeProvider>();
-
-    if (authProvider.getUserFirebaseId()?.isNotEmpty == true) {
-      currentUserId = authProvider.getUserFirebaseId()!;
-    } else {
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(builder: (context) => login()),
-      //   (Route<dynamic> route) => false,
-      // );
-    }
-    registerNotification();
-    //configLocalNotification();
-    listScrollController.addListener(scrollListener);
-  }
-
   @override
   void dispose() {
     super.dispose();
     btnClearController.close();
-  }
-
-  void registerNotification() {
-    firebaseMessaging.requestPermission();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('onMessage: $message');
-      if (message.notification != null) {
-        showNotification(message.notification!);
-      }
-      return;
-    });
-
-    firebaseMessaging.getToken().then((token) {
-      print('push token: $token');
-      if (token != null) {
-        homeProvider.updateDataFirestore(
-            widget.type == "user"
-                ? FirestoreConstants.pathUservendorCollection
-                : FirestoreConstants.pathUserCollection,
-            currentUserId,
-            {'pushToken': token});
-      }
-    }).catchError((err) {
-      Fluttertoast.showToast(msg: err.message.toString());
-    });
   }
 
   // void configLocalNotification() {
@@ -133,33 +79,6 @@ class HomePageState extends State<chat_home_list> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => SettingsPage()));
     }
-  }
-
-  void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.coder.hookup' : '',
-      'Flutter chat demo',
-      playSound: true,
-      enableVibration: true,
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    DarwinNotificationDetails iOSPlatformChannelSpecifics =
-        const DarwinNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    print(remoteNotification);
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      remoteNotification.title,
-      remoteNotification.body,
-      platformChannelSpecifics,
-      payload: null,
-    );
   }
 
   Future<bool> onBackPress() {
@@ -260,7 +179,6 @@ class HomePageState extends State<chat_home_list> {
   }
 
   Future<void> handleSignOut() async {
-    // authProvider.handleSignOut();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => login()),
       (Route<dynamic> route) => false,
@@ -280,8 +198,6 @@ class HomePageState extends State<chat_home_list> {
           style: TextStyle(
               fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        // centerTitle: true,
-        // actions: <Widget>[buildPopupMenu()],
       ),
       body: SafeArea(
         // child: WillPopScope(
@@ -306,22 +222,28 @@ class HomePageState extends State<chat_home_list> {
                               itemCount: state.map["data"]["HostList"].length,
                               itemBuilder: (BuildContext context, int index) {
                                 return ListTile(
-                                  // TODO : Navigation To Chat Page
-                                  onTap: () {
+                                  // TODO: Navigation To Chat Page
+                                  onTap: () async {
+                                    // SharedPreferences pref =
+                                    //     await SharedPreferences.getInstance();
+                                    // var getUserID =
+                                    //     pref.getString(FirestoreConstants.idTo);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ChatPage(
-                                          chatUserListModel: ChatUserListModel(
-                                            data: Data(
-                                              hostList: <HostList>[
-                                                state.map["data"]["HostList"]
-                                                    ["user_id"]
-                                              ],
-                                            ),
-                                          ),
-                                          type: widget.type,
-                                        ),
+                                            arguments: ChatPageArguments(
+                                                peerId: state.map["data"]
+                                                        ["HostList"][index]
+                                                        ["user_id"]
+                                                    .toString(),
+                                                peerAvatar: state.map["data"]
+                                                        ["HostList"][index]
+                                                    ["profile_image"],
+                                                peerNickname: state.map["data"]
+                                                        ["HostList"][index]
+                                                    ["name"]),
+                                            type: widget.type),
                                       ),
                                     );
                                   },
@@ -350,40 +272,6 @@ class HomePageState extends State<chat_home_list> {
                     },
                   ),
                 ),
-                // Expanded(
-                //   child: StreamBuilder<QuerySnapshot>(
-                //     stream: homeProvider.getStreamFireStore(
-                //         widget.type == "user"
-                //             ? FirestoreConstants.pathUservendorCollection
-                //             : FirestoreConstants.pathUserCollection,
-                //         _limit,
-                //         _textSearch),
-                //     builder: (BuildContext context,
-                //         AsyncSnapshot<QuerySnapshot> snapshot) {
-                //       if (snapshot.hasData) {
-                //         if ((snapshot.data?.docs.length ?? 0) > 0) {
-                //           return ListView.builder(
-                //             padding: const EdgeInsets.all(10),
-                //             itemBuilder: (context, index) =>
-                //                 buildItem(context, snapshot.data?.docs[index]),
-                //             itemCount: snapshot.data?.docs.length,
-                //             controller: listScrollController,
-                //           );
-                //         } else {
-                //           return const Center(
-                //             child: Text("No users"),
-                //           );
-                //         }
-                //       } else {
-                //         return const Center(
-                //           child: CircularProgressIndicator(
-                //             color: ColorConstants.themeColor,
-                //           ),
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ),
               ],
             ),
 
@@ -487,207 +375,4 @@ class HomePageState extends State<chat_home_list> {
       },
     );
   }
-
-// Widget chatMessageItme(BuildContext context, snapshot){
-//   if(snapshot!=null){
-//     ChatUserListModel chatUserListModel = ChatUserListModel.fromJson(snapshot);
-//     if(chatUserListModel.data?.hostList?.first.userId !=null){
-//       return const SizedBox.shrink();
-//     }else{return Container(
-//       color: Colors.amber,
-//       margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-//       child: TextButton(
-//         onPressed: () {
-//           if (Utilities.isKeyboardShowing()) {
-//             Utilities.closeKeyboard(context);
-//           }
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => ChatPage(
-//                 arguments: ChatPageArguments(
-//                   peerId: chatUserListModel.data!.hostList!.first.userId.toString(),
-//                   peerAvatar: chatUserListModel.data!.hostList!.first.profileImage.toString(),
-//
-//                 ),
-//                 type: widget.type,
-//               ),
-//             ),
-//           );
-//         },
-//         style: ButtonStyle(
-//           //backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
-//           shape: MaterialStateProperty.all<OutlinedBorder>(
-//             const RoundedRectangleBorder(
-//               borderRadius: BorderRadius.all(Radius.circular(10)),
-//             ),
-//           ),
-//         ),
-//         child: Row(
-//           children: <Widget>[
-//             Material(
-//               borderRadius: const BorderRadius.all(Radius.circular(25)),
-//               clipBehavior: Clip.hardEdge,
-//               child: userChat.photoUrl.isNotEmpty
-//                   ? Image.network(
-//                 userChat.photoUrl,
-//                 fit: BoxFit.cover,
-//                 width: 50,
-//                 height: 50,
-//                 loadingBuilder: (BuildContext context, Widget child,
-//                     ImageChunkEvent? loadingProgress) {
-//                   if (loadingProgress == null) return child;
-//                   return Container(
-//                     width: 50,
-//                     height: 50,
-//                     child: Center(
-//                       child: CircularProgressIndicator(
-//                         color: ColorConstants.themeColor,
-//                         value: loadingProgress.expectedTotalBytes !=
-//                             null
-//                             ? loadingProgress.cumulativeBytesLoaded /
-//                             loadingProgress.expectedTotalBytes!
-//                             : null,
-//                       ),
-//                     ),
-//                   );
-//                 },
-//                 errorBuilder: (context, object, stackTrace) {
-//                   return const Icon(
-//                     Icons.account_circle,
-//                     size: 50,
-//                     color: ColorConstants.greyColor,
-//                   );
-//                 },
-//               )
-//                   : const Icon(
-//                 Icons.account_circle,
-//                 size: 50,
-//                 color: ColorConstants.greyColor,
-//               ),
-//             ),
-//
-//           ],
-//         ),
-//       ),
-//     );}
-//   }
-// }
-// Widget buildItem(BuildContext context, DocumentSnapshot? document) {
-//   if (document != null) {
-//     UserChat userChat = UserChat.fromDocument(document);
-//     if (userChat.id == currentUserId) {
-//       return const SizedBox.shrink();
-//     } else {
-//       return Container(
-//         color: Colors.amber,
-//         margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-//         child: TextButton(
-//           onPressed: () {
-//             if (Utilities.isKeyboardShowing()) {
-//               Utilities.closeKeyboard(context);
-//             }
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(
-//                 builder: (context) => ChatPage(
-//                   arguments: ChatPageArguments(
-//                     peerId: userChat.id,
-//                     peerAvatar: userChat.photoUrl,
-//                     // peerNickname: userChat.nickname,
-//                   ),
-//                   type: widget.type,
-//                 ),
-//               ),
-//             );
-//           },
-//           style: ButtonStyle(
-//             //backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
-//             shape: MaterialStateProperty.all<OutlinedBorder>(
-//               const RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.all(Radius.circular(10)),
-//               ),
-//             ),
-//           ),
-//           child: Row(
-//             children: <Widget>[
-//               Material(
-//                 borderRadius: const BorderRadius.all(Radius.circular(25)),
-//                 clipBehavior: Clip.hardEdge,
-//                 child: userChat.photoUrl.isNotEmpty
-//                     ? Image.network(
-//                         userChat.photoUrl,
-//                         fit: BoxFit.cover,
-//                         width: 50,
-//                         height: 50,
-//                         loadingBuilder: (BuildContext context, Widget child,
-//                             ImageChunkEvent? loadingProgress) {
-//                           if (loadingProgress == null) return child;
-//                           return Container(
-//                             width: 50,
-//                             height: 50,
-//                             child: Center(
-//                               child: CircularProgressIndicator(
-//                                 color: ColorConstants.themeColor,
-//                                 value: loadingProgress.expectedTotalBytes !=
-//                                         null
-//                                     ? loadingProgress.cumulativeBytesLoaded /
-//                                         loadingProgress.expectedTotalBytes!
-//                                     : null,
-//                               ),
-//                             ),
-//                           );
-//                         },
-//                         errorBuilder: (context, object, stackTrace) {
-//                           return const Icon(
-//                             Icons.account_circle,
-//                             size: 50,
-//                             color: ColorConstants.greyColor,
-//                           );
-//                         },
-//                       )
-//                     : const Icon(
-//                         Icons.account_circle,
-//                         size: 50,
-//                         color: ColorConstants.greyColor,
-//                       ),
-//               ),
-//               Flexible(
-//                 child: Container(
-//                   margin: const EdgeInsets.only(left: 20),
-//                   child: Column(
-//                     children: <Widget>[
-//                       Container(
-//                         alignment: Alignment.centerLeft,
-//                         margin: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-//                         child: Text(
-//                           'Nickname: ${userChat.nickname}',
-//                           maxLines: 1,
-//                           style: const TextStyle(
-//                               color: ColorConstants.primaryColor),
-//                         ),
-//                       ),
-//                       Container(
-//                         alignment: Alignment.centerLeft,
-//                         margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-//                         child: Text(
-//                           'About me: ${userChat.aboutMe}',
-//                           maxLines: 1,
-//                           style: const TextStyle(
-//                               color: ColorConstants.primaryColor),
-//                         ),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       );
-//     }
-//   } else {
-//     return const SizedBox.shrink();
-//   }
-// }
 }

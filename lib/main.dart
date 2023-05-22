@@ -81,6 +81,8 @@ class MyApp extends StatelessWidget {
             create: (context) => religion_provider()),
         ChangeNotifierProvider<smoke_provider>(
             create: (context) => smoke_provider()),
+        ChangeNotifierProvider<ChatListMessageProvider>(
+            create: (context) => ChatListMessageProvider()),
         ChangeNotifierProvider<starsign_provider>(
             create: (context) => starsign_provider()),
         ChangeNotifierProvider<weight_provider>(

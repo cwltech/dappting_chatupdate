@@ -1,6 +1,9 @@
+import 'dart:convert';
+
+import 'package:dapp/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class apperance_provider with ChangeNotifier {
   Map<String, dynamic> map = {};
@@ -770,9 +773,12 @@ class hostlist_provider with ChangeNotifier {
   Future<void> host_list(String user_id) async {
     String postUrl = "https://hookupindia.in/hookup/ApiController/userHostList";
     print("stringrequest");
-    var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
-    request.send().then((response) {
+    var request = http.MultipartRequest("POST", Uri.parse(postUrl));
+    request.send().then((response) async {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString(FirestoreConstants.idTo, user_id);
       request.fields['user_id'] = user_id;
+
       http.Response.fromStream(response).then((onValue) {
         if (response.statusCode == 200) {
           try {

@@ -30,8 +30,9 @@ class _home_userState extends State<home_user> {
     print("blodid $user_id");
   }
 
+  @override
   Widget build(BuildContext context) {
-    context.read<hostlist_provider>().host_list(user_id);
+    context.read<hostlist_provider>().host_list(user_id).toString();
     return Scaffold(
       body: Consumer<hostlist_provider>(
         builder: (context, value, child) {

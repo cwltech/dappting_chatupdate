@@ -3,38 +3,27 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dapp/models/host.list.model.dart';
 import 'package:dapp/providers/keyboard_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
 import 'package:dapp/wallet.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
-import '../models/message_chat.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/widgets.dart';
-import 'pages.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage(
-      {Key? key,
-      required this.chatUserListModel,
-      this.arguments,
-      required this.type})
+  const ChatPage({Key? key, required this.arguments, required this.type})
       : super(key: key);
 
-  final ChatUserListModel chatUserListModel;
-  final ChatPageArguments? arguments;
+  final ChatPageArguments arguments;
   final type;
 
   @override
@@ -75,10 +64,25 @@ class ChatPageState extends State<ChatPage> {
   ];
   List<FlashyTabBarItem> items = [];
 
+  void _fetchMessage() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    var getUserID = pref.getString(FirestoreConstants.id);
+
+    final chatMessage = context.read<ChatListMessageProvider>();
+
+    if (getUserID != null) {
+      chatMessage.messagelist(getUserID, widget.arguments.peerId);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
     chatProvider = context.read<ChatProvider>();
+
+    _fetchMessage();
     authProvider = context.read<AuthProvider>();
     giftProvider = context.read<virtual_gift_provider>();
     // context
@@ -207,20 +211,20 @@ class ChatPageState extends State<ChatPage> {
                             },
                           );
                         } else {
-                          onSendMessage(data["GiftList"][index]["gift_image"],
-                              TypeMessage.sticker);
-                          coin_deduction(
-                              currentUserId ?? 'currentUserID',
-                              widget.arguments!.peerId,
-                              data["GiftList"][index]["gift_credit"],
-                              "",
-                              "virtual_gift");
-                          chatingDetails(
-                              currentUserId ?? 'currentUserID',
-                              widget.arguments!.peerId,
-                              "1",
-                              data["GiftList"][index]["gift_image"],
-                              data["GiftList"][index]["gift_id"].toString());
+                          // onSendMessage(data["GiftList"][index]["gift_image"],
+                          //     TypeMessage.sticker);
+                          // coin_deduction(
+                          //     currentUserId ?? 'currentUserID',
+                          //     widget.arguments.peerId,
+                          //     data["GiftList"][index]["gift_credit"],
+                          //     "",
+                          //     "virtual_gift");
+                          // chatingDetails(
+                          //     currentUserId ?? 'currentUserID',
+                          //     widget.arguments.peerId,
+                          //     "1",
+                          //     data["GiftList"][index]["gift_image"],
+                          //     data["GiftList"][index]["gift_id"].toString());
                         }
                       }
                       // }
@@ -239,23 +243,23 @@ class ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    UploadTask uploadTask = chatProvider.uploadFile(imageFile!, fileName);
-    try {
-      TaskSnapshot snapshot = await uploadTask;
-      imageUrl = await snapshot.ref.getDownloadURL();
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, TypeMessage.image);
-      });
-    } on FirebaseException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      Fluttertoast.showToast(msg: e.message ?? e.toString());
-    }
-  }
+  // Future uploadFile() async {
+  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //   UploadTask uploadTask = chatProvider.uploadFile(imageFile!, fileName);
+  //   try {
+  //     TaskSnapshot snapshot = await uploadTask;
+  //     imageUrl = await snapshot.ref.getDownloadURL();
+  //     setState(() {
+  //       isLoading = false;
+  //       // onSendMessage(imageUrl, TypeMessage.image);
+  //     });
+  //   } on FirebaseException catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     Fluttertoast.showToast(msg: e.message ?? e.toString());
+  //   }
+  // }
 
   coin_deduction(String userId, String host_id, String coins, String sec,
       String plan_type) async {
@@ -313,8 +317,7 @@ class ChatPageState extends State<ChatPage> {
             var gettingID = pref.getString(FirestoreConstants.id);
             var nickNameID = pref.getString(FirestoreConstants.nickname);
             // var recID = pref.getString(FirestoreConstants.content);
-            print(
-                "Check Receiver User ID -------> ${widget.arguments!.peerId}");
+            print("Check Receiver User ID -------> ${widget.arguments.peerId}");
             print("User Nickname --------------->$nickNameID");
             print("Check Sender User ID ---------------> $gettingID");
             print("resultt $mapRes");
@@ -326,344 +329,42 @@ class ChatPageState extends State<ChatPage> {
     });
   }
 
-  void onSendMessage(String content, int type) {
-    if (content.trim().isNotEmpty) {
-      textEditingController.clear();
-      chatProvider.sendMessage(content, type, groupChatId,
-          currentUserId ?? 'currentUserID', widget.arguments!.peerId);
-      if (listScrollController.hasClients) {
-        listScrollController.animateTo(0,
-            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-      }
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
-    }
-  }
+  // void onSendMessage(String content, int type) {
+  //   if (content.trim().isNotEmpty) {
+  //     textEditingController.clear();
+  //     chatProvider.sendMessage(content, type, groupChatId,
+  //         currentUserId ?? 'currentUserID', widget.arguments.peerId);
+  //     if (listScrollController.hasClients) {
+  //       listScrollController.animateTo(0,
+  //           duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+  //     }
+  //   } else {
+  //     Fluttertoast.showToast(
+  //         msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
+  //   }
+  // }
 
-  Widget buildItem(int index, DocumentSnapshot? document) {
-    if (document != null) {
-      MessageChat messageChat = MessageChat.fromDocument(document);
-      if (messageChat.idFrom == currentUserId) {
-        // Right (my message)
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                messageChat.type == TypeMessage.text
-                    // Text
-                    ? Container(
-                        padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                        width: 200,
-                        decoration: BoxDecoration(
-                            color: const Color(0xff07D3DF),
-                            //color: ColorConstants.greyColor2,
-                            borderRadius: BorderRadius.circular(8)),
-                        margin: EdgeInsets.only(
-                            bottom: isLastMessageRight(index) ? 20 : 10,
-                            right: 10),
-                        child: Text(
-                          messageChat.content,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      )
-                    : messageChat.type == TypeMessage.image
-                        // Image
-                        ? Container(
-                            margin: EdgeInsets.only(
-                                bottom: isLastMessageRight(index) ? 20 : 10,
-                                right: 10),
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FullPhotoPage(
-                                      url: messageChat.content,
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ButtonStyle(
-                                  padding:
-                                      MaterialStateProperty.all<EdgeInsets>(
-                                          const EdgeInsets.all(0))),
-                              child: Material(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(8)),
-                                clipBehavior: Clip.hardEdge,
-                                child: Image.network(
-                                  messageChat.content,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        // color: Color(0xff07D3DF),
-                                        color: ColorConstants.greyColor2,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                      ),
-                                      width: 200,
-                                      height: 200,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: ColorConstants.themeColor,
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, object, stackTrace) {
-                                    return Material(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                      clipBehavior: Clip.hardEdge,
-                                      child: Image.asset(
-                                        'assets/img_not_available.jpeg',
-                                        width: 200,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    );
-                                  },
-                                  width: 200,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          )
-                        // Sticker
-                        : Container(
-                            margin: EdgeInsets.only(
-                                bottom: isLastMessageRight(index) ? 20 : 10,
-                                right: 10),
-                            child: Image.network(
-                              messageChat.content,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 10, top: 0, bottom: 2),
-              child: Text(
-                textAlign: TextAlign.end,
-                DateFormat('dd MMM kk:mm').format(
-                    DateTime.fromMillisecondsSinceEpoch(
-                        int.parse(messageChat.timestamp))),
-                style: const TextStyle(
-                    color: ColorConstants.greyColor,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic),
-              ),
-            )
-          ],
-        );
-      } else {
-        // Left (peer message)
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  isLastMessageLeft(index)
-                      ? Material(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(18),
-                          ),
-                          clipBehavior: Clip.hardEdge,
-                          child: Image.network(
-                            widget.arguments!.peerAvatar,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorConstants.themeColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, object, stackTrace) {
-                              return const Icon(
-                                Icons.account_circle,
-                                size: 35,
-                                color: ColorConstants.greyColor,
-                              );
-                            },
-                            width: 35,
-                            height: 35,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Container(width: 35),
-                  messageChat.type == TypeMessage.text
-                      ? Container(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          width: 200,
-                          decoration: BoxDecoration(
-                              color: const Color(0xffC50808),
-                              borderRadius: BorderRadius.circular(8)),
-                          margin: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            messageChat.content,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : messageChat.type == TypeMessage.image
-                          ? Container(
-                              margin: const EdgeInsets.only(left: 10),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FullPhotoPage(
-                                          url: messageChat.content),
-                                    ),
-                                  );
-                                },
-                                style: ButtonStyle(
-                                    padding:
-                                        MaterialStateProperty.all<EdgeInsets>(
-                                            const EdgeInsets.all(0))),
-                                child: Material(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(8)),
-                                  clipBehavior: Clip.hardEdge,
-                                  child: Image.network(
-                                    messageChat.content,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        decoration: const BoxDecoration(
-                                          color: ColorConstants.greyColor2,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(8),
-                                          ),
-                                        ),
-                                        width: 200,
-                                        height: 200,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: ColorConstants.themeColor,
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder:
-                                        (context, object, stackTrace) =>
-                                            Material(
-                                      child: Image.asset(
-                                        'assets/img_not_available.jpeg',
-                                        width: 200,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                      clipBehavior: Clip.hardEdge,
-                                    ),
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              margin: EdgeInsets.only(
-                                  bottom: isLastMessageRight(index) ? 20 : 10,
-                                  right: 10),
-                              child: Image.network(
-                                '${messageChat.content}',
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                ],
-              ),
+  // bool isLastMessageLeft(int index) {
+  //   if ((index > 0 &&
+  //           listMessage[index - 1].get(FirestoreConstants.idFrom) ==
+  //               currentUserId) ||
+  //       index == 0) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
-              // Time
-              isLastMessageLeft(index)
-                  ? Container(
-                      margin:
-                          const EdgeInsets.only(left: 50, top: 5, bottom: 5),
-                      child: Text(
-                        DateFormat('dd MMM kk:mm').format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                int.parse(messageChat.timestamp))),
-                        style: const TextStyle(
-                            color: ColorConstants.greyColor,
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    )
-                  : const SizedBox.shrink()
-            ],
-          ),
-        );
-      }
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
-
-  bool isLastMessageLeft(int index) {
-    if ((index > 0 &&
-            listMessage[index - 1].get(FirestoreConstants.idFrom) ==
-                currentUserId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool isLastMessageRight(int index) {
-    if ((index > 0 &&
-            listMessage[index - 1].get(FirestoreConstants.idFrom) !=
-                currentUserId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // bool isLastMessageRight(int index) {
+  //   if ((index > 0 &&
+  //           listMessage[index - 1].get(FirestoreConstants.idFrom) !=
+  //               currentUserId) ||
+  //       index == 0) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   Future<bool> onBackPress() {
     if (isShowSticker) {
@@ -711,9 +412,9 @@ class ChatPageState extends State<ChatPage> {
           child: Material(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             clipBehavior: Clip.hardEdge,
-            child: widget.arguments!.peerAvatar != null
+            child: widget.arguments.peerAvatar != null
                 ? Image.network(
-                    widget.arguments!.peerAvatar,
+                    widget.arguments.peerAvatar,
                     fit: BoxFit.cover,
                     width: 40,
                     height: 40,
@@ -751,15 +452,15 @@ class ChatPageState extends State<ChatPage> {
         ),
         title: Row(
           children: [
-            // Text(
-            //   widget.arguments!.peerNickname,
-            //   style: const TextStyle(
-            //     fontSize: 14,
-            //   ),
-            // ),
-            SizedBox(width: 5),
             Text(
-              widget.arguments!.peerId,
+              widget.arguments.peerNickname,
+              style: const TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              widget.arguments.peerId,
               style: const TextStyle(
                 fontSize: 14,
               ),
@@ -785,15 +486,15 @@ class ChatPageState extends State<ChatPage> {
                   buildListMessage(),
 
                   // Sticker
-                  isShowSticker ? buildSticker() : const SizedBox.shrink(),
+                  isShowSticker ? showSticker() : const SizedBox.shrink(),
 
                   // Input content
-                  buildInput(),
+                  messageInput(),
                 ],
               ),
 
               // Loading
-              buildLoading()
+              showLoading()
             ],
           ),
         ),
@@ -801,15 +502,16 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildSticker() {
+  // TODO : Sticker Section
+  Widget showSticker() {
     return Expanded(child:
         Consumer<virtual_gift_provider>(builder: (context, value, child) {
-      print("valuep$value");
-      //items = [FlashyTabBarItem(icon: Icon(Icons.settings), title: Text(""))];
-      return value.map.length == 0 && !value.error
-          ? const Center(child: CircularProgressIndicator())
+      print("Sticker Errrorr ==============> $value");
+
+      return value.map.isEmpty && !value.error
+          ? const Center(child: Center(child: CircularProgressIndicator()))
           : value.error
-              ? const Text("Opps SOmething went wrong")
+              ? const Text("Opps something went wrong")
               : value.map["data"]["CategoryList"] != null
                   ? Container(
                       decoration: const BoxDecoration(
@@ -884,111 +586,14 @@ class ChatPageState extends State<ChatPage> {
                                       CupertinoIcons.gift,
                                     ),
                                     title: Text(
-                                      value.map["data"]["CategoryList"]
-                                          [_selectedIndex]["category_name"],
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  ),
+                                        value.map["data"]["CategoryList"]
+                                            [_selectedIndex]["category_name"],
+                                        style: const TextStyle(fontSize: 10)),
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                          /*Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi1', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi1.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi2', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi2.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi3', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi3.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            ),
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi4', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi4.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi5', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi5.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi6', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi6.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            ),
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi7', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi7.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi8', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi8.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi9', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/mimi9.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            )*/
                         ],
                       ),
                     )
@@ -998,24 +603,25 @@ class ChatPageState extends State<ChatPage> {
     }));
   }
 
-  Widget buildLoading() {
+  //TODO : Show Loading
+  Widget showLoading() {
     return Positioned(
       child: isLoading ? LoadingView() : const SizedBox.shrink(),
     );
   }
 
-  // TODO : Text Field For Message
-  Widget buildInput() {
+  // TODO : Text Field For Message(Message)
+  Widget messageInput() {
     onSendMessagesFunction() async {
       if (_formKey.currentState!.validate()) {
         SharedPreferences pref = await SharedPreferences.getInstance();
         var userID = pref.getString(FirestoreConstants.id);
 
         print("User ID From Share ---------> $userID");
-        print("User To -----------> ${widget.arguments!.peerId}");
+        print("User To -----------> ${widget.arguments.peerId}");
         print("Message =========> ${TypeMessage.text}");
         print("Message Print -------------> ${textEditingController.text}");
-        chatingDetails(userID.toString(), widget.arguments!.peerId,
+        chatingDetails(userID.toString(), widget.arguments.peerId,
             TypeMessage.text.toString(), textEditingController.text, "");
         setState(() {
           textEditingController.clear();
@@ -1024,13 +630,14 @@ class ChatPageState extends State<ChatPage> {
     }
 
     return Container(
-        width: double.infinity,
-        height: 50,
-        decoration: const BoxDecoration(
-            border: Border(
-                top: BorderSide(color: ColorConstants.greyColor2, width: 0.5)),
-            color: Colors.white),
-        child: Row(children: <Widget>[
+      width: double.infinity,
+      height: 50,
+      decoration: const BoxDecoration(
+          border: Border(
+              top: BorderSide(color: ColorConstants.greyColor2, width: 0.5)),
+          color: Colors.white),
+      child: Row(
+        children: <Widget>[
           // TODO : Button Send Image Button
           // Material(
           //   color: Colors.white,
@@ -1065,9 +672,9 @@ class ChatPageState extends State<ChatPage> {
               child: Form(
                 key: _formKey,
                 child: TextField(
-                  onSubmitted: (value) {
-                    onSendMessage(textEditingController.text, TypeMessage.text);
-                  },
+                  // onSubmitted: (value) {
+                  //   // onSendMessage(textEditingController.text, TypeMessage.text);
+                  // },
                   style: const TextStyle(
                       color: ColorConstants.primaryColor, fontSize: 15),
                   controller: textEditingController,
@@ -1087,6 +694,7 @@ class ChatPageState extends State<ChatPage> {
             color: Colors.white,
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
+              color: ColorConstants.primaryColor,
               child: IconButton(
                 onPressed: onSendMessagesFunction,
                 icon: const Icon(
@@ -1094,47 +702,48 @@ class ChatPageState extends State<ChatPage> {
                   color: Color(0xffCC0000),
                 ),
               ),
-              color: ColorConstants.primaryColor,
             ),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget buildListMessage() {
-    return Flexible(
-      child: groupChatId.isNotEmpty
-          ? StreamBuilder<QuerySnapshot>(
-              stream: chatProvider.getChatStream(groupChatId, _limit),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  listMessage = snapshot.data!.docs;
-                  if (listMessage.isNotEmpty) {
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(10),
-                      itemBuilder: (context, index) =>
-                          buildItem(index, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data?.docs.length,
-                      reverse: true,
-                      controller: listScrollController,
-                    );
-                  } else {
-                    return const Center(child: Text("No message here yet..."));
-                  }
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorConstants.themeColor,
-                    ),
-                  );
-                }
-              },
-            )
-          : const Center(
-              child: CircularProgressIndicator(
-                color: ColorConstants.themeColor,
-              ),
-            ),
+    return Expanded(
+      child:
+          Consumer<ChatListMessageProvider>(builder: (context, state, child) {
+        final dataList = state.map["data"];
+        return state.map.isEmpty && !state.error
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : state.error
+                ? const Center(child: Text(" 'NO CHAT' "))
+                : state.map["data"] != null
+                    ? ListView.separated(
+                        reverse: false,
+                        itemCount: dataList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                              margin: const EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: widget.arguments.peerId ==
+                                        dataList[index]["user_id"]
+                                    ? MainAxisAlignment.start
+                                    : MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(dataList[index]["message"]),
+                                ],
+                              ));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Padding(
+                              padding: EdgeInsets.only(bottom: 10));
+                        },
+                      )
+                    : const SizedBox();
+      }),
     );
   }
 }
@@ -1142,11 +751,10 @@ class ChatPageState extends State<ChatPage> {
 class ChatPageArguments {
   final String peerId;
   final String peerAvatar;
-  // final String peerNickname;
+  final String peerNickname;
 
-  ChatPageArguments({
-    required this.peerId,
-    required this.peerAvatar,
-    // required this.peerNickname
-  });
+  ChatPageArguments(
+      {required this.peerId,
+      required this.peerAvatar,
+      required this.peerNickname});
 }

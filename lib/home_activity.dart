@@ -20,9 +20,7 @@ class _home extends State<home_home> {
     home_user(),
     // home_match(),
     hotpage(),
-    chat_home_list(
-      type: "user",
-    ),
+    const chat_home_list(type: "user"),
     profile_dashboard(),
     // const ViewProfilePage(),
     myprofile(),
