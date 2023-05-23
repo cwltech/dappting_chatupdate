@@ -81,8 +81,14 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
 
     chatProvider = context.read<ChatProvider>();
+    const oneSecond = Duration(seconds: 1);
+    print(oneSecond);
+    Timer.periodic(
+        oneSecond,
+        (Timer t) => setState(() {
+              _fetchMessage();
+            }));
 
-    _fetchMessage();
     authProvider = context.read<AuthProvider>();
     giftProvider = context.read<virtual_gift_provider>();
     // context
@@ -168,11 +174,11 @@ class ChatPageState extends State<ChatPage> {
   }
 
   Widget gifts(int giftcount, var data, int selecteditem) {
-    print(" peerId =========> $currentUserId");
+    print(" peerId =========> ${widget.arguments.peerId}");
     context
         .read<profile_details_provider>()
         .profile_details_list(currentUserId ?? 'currentUserID');
-    // .profile_details_list(currentUserId);
+
     return Consumer<profile_details_provider>(builder: (context, value, child) {
       return value.map["data"]["userData"] != null
           ? Center(
@@ -211,20 +217,7 @@ class ChatPageState extends State<ChatPage> {
                             },
                           );
                         } else {
-                          // onSendMessage(data["GiftList"][index]["gift_image"],
-                          //     TypeMessage.sticker);
-                          // coin_deduction(
-                          //     currentUserId ?? 'currentUserID',
-                          //     widget.arguments.peerId,
-                          //     data["GiftList"][index]["gift_credit"],
-                          //     "",
-                          //     "virtual_gift");
-                          // chatingDetails(
-                          //     currentUserId ?? 'currentUserID',
-                          //     widget.arguments.peerId,
-                          //     "1",
-                          //     data["GiftList"][index]["gift_image"],
-                          //     data["GiftList"][index]["gift_id"].toString());
+                          //
                         }
                       }
                       // }
@@ -251,7 +244,7 @@ class ChatPageState extends State<ChatPage> {
   //     imageUrl = await snapshot.ref.getDownloadURL();
   //     setState(() {
   //       isLoading = false;
-  //       // onSendMessage(imageUrl, TypeMessage.image);
+  //       onSendMessage(imageUrl, TypeMessage.image);
   //     });
   //   } on FirebaseException catch (e) {
   //     setState(() {
@@ -710,41 +703,47 @@ class ChatPageState extends State<ChatPage> {
   }
 
   Widget buildListMessage() {
-    return Expanded(
-      child:
-          Consumer<ChatListMessageProvider>(builder: (context, state, child) {
-        final dataList = state.map["data"];
-        return state.map.isEmpty && !state.error
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : state.error
-                ? const Center(child: Text(" 'NO CHAT' "))
-                : state.map["data"] != null
-                    ? ListView.separated(
-                        reverse: false,
-                        itemCount: dataList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                              margin: const EdgeInsets.all(10),
-                              child: Row(
-                                mainAxisAlignment: widget.arguments.peerId ==
-                                        dataList[index]["user_id"]
-                                    ? MainAxisAlignment.start
-                                    : MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(dataList[index]["message"]),
-                                ],
-                              ));
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const Padding(
-                              padding: EdgeInsets.only(bottom: 10));
-                        },
-                      )
-                    : const SizedBox();
-      }),
-    );
+    return Expanded(child:
+        Consumer<ChatListMessageProvider>(builder: (context, state, child) {
+      final dataList = state.map["data"];
+      return state.map.isNotEmpty
+          ? ListView.separated(
+              controller: listScrollController,
+              itemCount: dataList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    margin: const EdgeInsets.all(10),
+                    child: Row(
+                        mainAxisAlignment: widget.arguments.peerId ==
+                                dataList[index]["user_id"]
+                            ? MainAxisAlignment.start
+                            : MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            height: MediaQuery.of(context).size.height / 11,
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            child: Card(
+                              color: Colors.redAccent,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  dataList[index]["message"],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]));
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Padding(padding: EdgeInsets.only(bottom: 10));
+              },
+            )
+          : const Center(
+              child: Text(" 'Start The Chat With Your Partner 😊..' "));
+    }));
   }
 }
 
