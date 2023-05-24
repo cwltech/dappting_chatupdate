@@ -45,6 +45,7 @@ class ChatPageState extends State<ChatPage> {
   String imageUrl = "";
 
   final TextEditingController textEditingController = TextEditingController();
+
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
 
@@ -310,9 +311,11 @@ class ChatPageState extends State<ChatPage> {
             var gettingID = pref.getString(FirestoreConstants.id);
             var nickNameID = pref.getString(FirestoreConstants.nickname);
             // var recID = pref.getString(FirestoreConstants.content);
-            print("Check Receiver User ID -------> ${widget.arguments.peerId}");
+            print(
+                "Check Receiver User ID 📥📥📥📥📥📥-------> ${widget.arguments.peerId}");
             print("User Nickname --------------->$nickNameID");
-            print("Check Sender User ID ---------------> $gettingID");
+            print(
+                "Check Sender User ID 📤📤📤📤📤📤 ---------------> $gettingID");
             print("resultt $mapRes");
           } else {}
         } catch (e) {
@@ -499,7 +502,8 @@ class ChatPageState extends State<ChatPage> {
   Widget showSticker() {
     return Expanded(child:
         Consumer<virtual_gift_provider>(builder: (context, value, child) {
-      print("Sticker Errrorr ==============> $value");
+      print(
+          "Sticker List👍👍👍👍👍👍👍👌==============> ${value.map["data"]["CategoryList"][_selectedIndex]["GiftList"]}");
 
       return value.map.isEmpty && !value.error
           ? const Center(child: Center(child: CircularProgressIndicator()))
@@ -606,14 +610,18 @@ class ChatPageState extends State<ChatPage> {
   // TODO : Text Field For Message(Message)
   Widget messageInput() {
     onSendMessagesFunction() async {
+      if (listScrollController.hasClients) {
+        final position = listScrollController.position.maxScrollExtent;
+        listScrollController.position;
+      }
       if (_formKey.currentState!.validate()) {
         SharedPreferences pref = await SharedPreferences.getInstance();
         var userID = pref.getString(FirestoreConstants.id);
 
-        print("User ID From Share ---------> $userID");
-        print("User To -----------> ${widget.arguments.peerId}");
-        print("Message =========> ${TypeMessage.text}");
-        print("Message Print -------------> ${textEditingController.text}");
+        print("User ID From Share 📤📤📤📤📤📤---------> $userID");
+        print("User To 📥📥📥📥📥📥 -----------> ${widget.arguments.peerId}");
+        print("Message 📄📄📄📄📄 =========> ${TypeMessage.text}");
+        print("Message Print 🖨 -------------> ${textEditingController.text}");
         chatingDetails(userID.toString(), widget.arguments.peerId,
             TypeMessage.text.toString(), textEditingController.text, "");
         setState(() {
@@ -665,9 +673,6 @@ class ChatPageState extends State<ChatPage> {
               child: Form(
                 key: _formKey,
                 child: TextField(
-                  // onSubmitted: (value) {
-                  //   // onSendMessage(textEditingController.text, TypeMessage.text);
-                  // },
                   style: const TextStyle(
                       color: ColorConstants.primaryColor, fontSize: 15),
                   controller: textEditingController,
@@ -702,7 +707,8 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildListMessage() {
+  //*** ======================> Text Message Show Section <====================== ***///
+  buildListMessage() {
     return Expanded(child:
         Consumer<ChatListMessageProvider>(builder: (context, state, child) {
       final dataList = state.map["data"];
@@ -711,31 +717,54 @@ class ChatPageState extends State<ChatPage> {
               controller: listScrollController,
               itemCount: dataList.length,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                    margin: const EdgeInsets.all(10),
-                    child: Row(
+                return Column(
+                  children: <Widget>[
+                    Row(
                         mainAxisAlignment: widget.arguments.peerId ==
                                 dataList[index]["user_id"]
                             ? MainAxisAlignment.start
                             : MainAxisAlignment.end,
                         children: <Widget>[
                           Container(
-                            height: MediaQuery.of(context).size.height / 11,
-                            width: MediaQuery.of(context).size.width / 2.5,
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: Card(
-                              color: Colors.redAccent,
+                            margin: const EdgeInsets.all(10),
+                            width: 225,
+                            decoration: BoxDecoration(
+                                color: widget.arguments.peerId !=
+                                        dataList[index]["user_id"]
+                                    ? const Color(0xFF07D3DF)
+                                    : const Color(0xFFC50808),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  dataList[index]["message"],
-                                ),
-                              ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ListTile(
+                                    trailing: Text(
+                                      dataList[index]["gift_id"],
+                                      overflow: TextOverflow.visible,
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    title: Text(
+                                      dataList[index]["message"],
+                                      overflow: TextOverflow.visible,
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(left: 75),
+                                      child: Text(
+                                        dataList[index]["date"],
+                                        overflow: TextOverflow.visible,
+                                        style: const TextStyle(
+                                            fontSize: 9, color: Colors.black),
+                                      ),
+                                    ),
+                                  )),
                             ),
                           ),
-                        ]));
+                        ]),
+                  ],
+                );
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const Padding(padding: EdgeInsets.only(bottom: 10));
