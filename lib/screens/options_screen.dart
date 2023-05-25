@@ -1,21 +1,20 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:ui';
+
 import 'package:dapp/loading_bar.dart';
 import 'package:dapp/payment_stripe.dart';
 import 'package:dapp/providers/profile_provider.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../invitevideocall.dart';
 import '../providers/profile_deatils_provider.dart';
 import '../show_profile.dart';
-import 'dart:math' as math;
-import 'package:permission_handler/permission_handler.dart';
 
 class OptionsScreen extends StatefulWidget {
   final int? index;
@@ -43,10 +42,10 @@ class _OptionsScreen extends State<OptionsScreen> {
   @override
   Widget build(BuildContext context) {
     context.read<hostlist_provider>().host_list(user_id);
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Consumer2<hostlist_provider, profile_details_provider>(
+      child: Consumer2<hostlist_provider, ProfileDetailsProvider>(
         builder: (context, value, value2, child) {
           return value.map["data"]["HostList"] != null
               ? Column(

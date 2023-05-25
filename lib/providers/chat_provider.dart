@@ -1,10 +1,7 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatListMessageProvider with ChangeNotifier {
   Map<String, dynamic> map = {};
@@ -17,7 +14,7 @@ class ChatListMessageProvider with ChangeNotifier {
 
   String get _errormessage => errormessage;
 
-  Future<void> messagelist(String userID, String recieverID) async {
+  Future<void> messageList(String userID, String recieverID) async {
     // userID = '65';
     // recieverID = '2';
     print('userId= $userID and rId = $recieverID');
@@ -70,53 +67,6 @@ class ChatListMessageProvider with ChangeNotifier {
     map = {};
     notifyListeners();
   }
-}
-
-class ChatProvider {
-  final SharedPreferences prefs;
-  final FirebaseFirestore firebaseFirestore;
-  final FirebaseStorage firebaseStorage;
-
-  ChatProvider(
-      {required this.firebaseFirestore,
-      required this.prefs,
-      required this.firebaseStorage});
-
-  String? getPref(String key) {
-    return prefs.getString(key);
-  }
-
-  // Future<void> updateDataFirestore(String collectionPath, String docPath,
-  //     Map<String, dynamic> dataNeedUpdate) {
-  //   return firebaseFirestore
-  //       .collection(collectionPath)
-  //       .doc(docPath)
-  //       .update(dataNeedUpdate);
-  // }
-
-// void sendMessage(String content, int type, String groupChatId,
-//     String currentUserId, String peerId) {
-//   DocumentReference documentReference = firebaseFirestore
-//       .collection(FirestoreConstants.pathMessageCollection)
-//       .doc(groupChatId)
-//       .collection(groupChatId)
-//       .doc(DateTime.now().millisecondsSinceEpoch.toString());
-//
-//   MessageChat messageChat = MessageChat(
-//     idFrom: currentUserId,
-//     idTo: peerId,
-//     timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
-//     content: content,
-//     type: type,
-//   );
-//
-//   FirebaseFirestore.instance.runTransaction((transaction) async {
-//     transaction.set(
-//       documentReference,
-//       messageChat.toJson(),
-//     );
-//   });
-// }
 }
 
 class TypeMessage {
