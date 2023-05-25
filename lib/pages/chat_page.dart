@@ -176,11 +176,10 @@ class ChatPageState extends State<ChatPage> {
   Widget gifts(int giftcount, var data, int selecteditem) {
     print(" peerId =========> ${widget.arguments.peerId}");
 
-    context
-        .read<ProfileDetailsProvider>()
-        .profileDetailsList(authProvider.getUserFirebaseId().toString());
+    context.read<profile_details_provider>().profile_details_list(
+        currentUserId ?? authProvider.getUserFirebaseId().toString());
 
-    return Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
+    return Consumer<profile_details_provider>(builder: (context, value, child) {
       return value.map["data"]["userData"] != null
           ? Center(
               child: GridView.builder(

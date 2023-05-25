@@ -48,7 +48,7 @@ class _myprofile extends State<myprofile> {
   var looking_partner = TextEditingController();
   var relationship = TextEditingController();
 
-  var userId;
+  var user_id;
   File? imageFile;
   List nicknamed = [];
   String? nicknameval;
@@ -96,15 +96,15 @@ class _myprofile extends State<myprofile> {
   getUserDetails(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      userId = prefs.getString(FirestoreConstants.id);
-      context.read<ProfileDetailsProvider>().profileDetailsList(userId);
+      user_id = prefs.getString(FirestoreConstants.id);
+      context.read<profile_details_provider>().profile_details_list(user_id);
     });
-    print("User Profile ID 🍆🍆🍆🍆 ==========> $userId");
+    print("User Profile ID 🍆🍆🍆🍆 ==========> $user_id");
   }
 
   @override
   Widget build(BuildContext context) {
-    context.read<ProfileDetailsProvider>().profileDetailsList(userId);
+    context.read<profile_details_provider>().profile_details_list(user_id);
 
     return Stack(
       children: [
@@ -169,9 +169,9 @@ class _myprofile extends State<myprofile> {
                   ],
                 ),
                 body: SingleChildScrollView(child:
-                    Consumer<ProfileDetailsProvider>(
+                    Consumer<profile_details_provider>(
                         builder: (context, value, child) {
-                  print("User Profile Data $value");
+                  print("User Pro$value");
                   return value.map.isEmpty && !value.error
                       ? const CircularProgressIndicator()
                       : value.error
@@ -301,7 +301,7 @@ class _myprofile extends State<myprofile> {
                                           top: 0.0, bottom: 8),
                                       child: Center(
                                         child: Text(
-                                          userId.toString(),
+                                          user_id.toString(),
                                           style: const TextStyle(
                                             color: Colors.grey,
                                             fontSize: 13,
@@ -410,11 +410,10 @@ class _myprofile extends State<myprofile> {
                                                     child: Row(
                                                       children: [
                                                         Text(
-                                                          value.map["data"][
-                                                                      "userData"]
-                                                                      ["coins"]
-                                                                  .toString() ??
-                                                              "",
+                                                          value.map["data"]
+                                                                  ["userData"]
+                                                                  ["coins"]
+                                                              .toString(),
                                                           style:
                                                               const TextStyle(
                                                             color: Colors.black,
@@ -478,7 +477,7 @@ class _myprofile extends State<myprofile> {
                                                               .centerLeft,
                                                           child: InkWell(
                                                             onTap: () {
-                                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyBalance()));
+                                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => mybalance()));
                                                             },
                                                             child: const Text(
                                                               " Premium / VIP",
@@ -767,7 +766,7 @@ class _myprofile extends State<myprofile> {
     context.read<maritial_provider>().maritial_list();
     context.read<education_provider>().eductaion_list();
     context.read<country_provider>().country_list();
-    context.read<ProfileDetailsProvider>().profileDetailsList(userId);
+    context.read<profile_details_provider>().profile_details_list(user_id);
 
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -793,8 +792,8 @@ class _myprofile extends State<myprofile> {
             elevation: 0.0,
           ),
         ),
-        body: SingleChildScrollView(child:
-            Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
+        body: SingleChildScrollView(child: Consumer<profile_details_provider>(
+            builder: (context, value, child) {
           fname.text = value.map["data"]["userData"]["fname"] ?? "";
           lname.text = value.map["data"]["userData"]["lname"] ?? "";
           pincode.text = value.map["data"]["userData"]["pincode"] ?? "";
@@ -2213,7 +2212,7 @@ class _myprofile extends State<myprofile> {
                                         fname.text,
                                         lname.text,
                                         "",
-                                        userId,
+                                        user_id,
                                         nickname.text,
                                         countryval != null ? countryval! : "",
                                         stateval != null ? stateval! : "",

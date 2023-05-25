@@ -96,10 +96,10 @@ class MyApp extends StatelessWidget {
             create: (context) => regular_package_provider()),
         ChangeNotifierProvider<virtual_gift_provider>(
             create: (context) => virtual_gift_provider()),
-        ChangeNotifierProvider<ProfileDetailsProvider>(
-            create: (context) => ProfileDetailsProvider()),
-        ChangeNotifierProvider<CoinDeductionProvider>(
-            create: (context) => CoinDeductionProvider()),
+        ChangeNotifierProvider<profile_details_provider>(
+            create: (context) => profile_details_provider()),
+        ChangeNotifierProvider<coin_deduction_provider>(
+            create: (context) => coin_deduction_provider()),
         ChangeNotifierProvider<block_list_provider>(
             create: (context) => block_list_provider()),
         ChangeNotifierProvider<female_details_provider>(

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class ProfileDetailsProvider with ChangeNotifier {
+class profile_details_provider with ChangeNotifier {
   Map<String, dynamic> map = {};
   bool error = false;
   String errormessage = '';
@@ -12,12 +12,12 @@ class ProfileDetailsProvider with ChangeNotifier {
   bool get _error => error;
   String get _errormessage => errormessage;
 
-  Future<void> profileDetailsList(String UserId) async {
+  Future<void> profile_details_list(String userId) async {
     String postUrl = "https://hookupindia.in/hookup/ApiController/userDetail";
     print("stringrequest");
     var request = http.MultipartRequest("POST", Uri.parse(postUrl));
-    request.fields['user_id'] = UserId;
-    print("hahahahh ==== > $UserId");
+    request.fields['user_id'] = userId.toString();
+    print("hahahahh ==== > $userId");
     request.send().then((response) {
       http.Response.fromStream(response).then((onValue) {
         if (response.statusCode == 200) {

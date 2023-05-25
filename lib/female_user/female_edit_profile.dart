@@ -110,7 +110,7 @@ class _myprofile extends State<female_edit_profile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       user_id = prefs.getString("user_id");
-      context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
+      context.read<profile_details_provider>().profile_details_list(user_id);
     });
     print("blodid $user_id");
   }
@@ -149,7 +149,7 @@ class _myprofile extends State<female_edit_profile> {
     context.read<english_provider>().english_list();
     context.read<eye_color_provider>().eye_color_list();
     context.read<hair_color_provider>().hair_color_list();
-    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
+    context.read<profile_details_provider>().profile_details_list(user_id);
 
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -193,8 +193,8 @@ class _myprofile extends State<female_edit_profile> {
             elevation: 0.0,
           ),
         ),
-        body: SingleChildScrollView(child:
-            Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
+        body: SingleChildScrollView(child: Consumer<profile_details_provider>(
+            builder: (context, value, child) {
           fname.text = value.map["data"]["userData"]["fname"] ?? "";
           lname.text = value.map["data"]["userData"]["lname"] ?? "";
           pincode.text = value.map["data"]["userData"]["pincode"] ?? "";

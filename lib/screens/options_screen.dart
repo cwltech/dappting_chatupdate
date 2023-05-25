@@ -42,10 +42,10 @@ class _OptionsScreen extends State<OptionsScreen> {
   @override
   Widget build(BuildContext context) {
     context.read<hostlist_provider>().host_list(user_id);
-    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
+    context.read<profile_details_provider>().profile_details_list(user_id);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Consumer2<hostlist_provider, ProfileDetailsProvider>(
+      child: Consumer2<hostlist_provider, profile_details_provider>(
         builder: (context, value, value2, child) {
           return value.map["data"]["HostList"] != null
               ? Column(
