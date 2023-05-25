@@ -35,7 +35,7 @@ class _female_profile extends State<female_profile> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     context.read<female_details_provider>().female_details(user_id);
     return Stack(
       children: [
@@ -71,7 +71,7 @@ class _female_profile extends State<female_profile> {
               elevation: 0.0,
             ),
             body: SingleChildScrollView(child:
-                Consumer2<profile_details_provider, female_details_provider>(
+                Consumer2<ProfileDetailsProvider, female_details_provider>(
                     builder: (context, value, value2, child) {
               print("valuep$value");
               return value.map.length == 0 && !value.error

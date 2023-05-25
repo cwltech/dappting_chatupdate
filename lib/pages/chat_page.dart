@@ -31,7 +31,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
-  String? currentUserId;
   final _formKey = GlobalKey<FormState>();
 
   List<QueryDocumentSnapshot> listMessage = [];
@@ -49,11 +48,12 @@ class ChatPageState extends State<ChatPage> {
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
 
-  late ChatProvider chatProvider;
+  // late ChatProvider chatProvider;
   late AuthProvider authProvider;
   late virtual_gift_provider giftProvider;
   var gift;
   var image_of_gift;
+  String? currentUserId;
   int _selectedIndex = 0;
 
   List<Widget> tabItems = [
@@ -73,7 +73,7 @@ class ChatPageState extends State<ChatPage> {
     final chatMessage = context.read<ChatListMessageProvider>();
 
     if (getUserID != null) {
-      chatMessage.messagelist(getUserID, widget.arguments.peerId);
+      chatMessage.messageList(getUserID, widget.arguments.peerId);
     }
   }
 
@@ -81,7 +81,6 @@ class ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    chatProvider = context.read<ChatProvider>();
     const oneSecond = Duration(seconds: 1);
     print(oneSecond);
     Timer.periodic(
@@ -92,12 +91,12 @@ class ChatPageState extends State<ChatPage> {
 
     authProvider = context.read<AuthProvider>();
     giftProvider = context.read<virtual_gift_provider>();
-    // context
-    //     .read<profile_details_provider>()
-    //     .profile_details_list(currentUserId);
-
     focusNode.addListener(onFocusChange);
     listScrollController.addListener(_scrollListener);
+    // context
+    //     .read<ProfileDetailsProvider>()
+    //     .profile_details_list(currentUserId);
+
     // readLocal();
   }
 
@@ -176,11 +175,12 @@ class ChatPageState extends State<ChatPage> {
 
   Widget gifts(int giftcount, var data, int selecteditem) {
     print(" peerId =========> ${widget.arguments.peerId}");
-    context
-        .read<profile_details_provider>()
-        .profile_details_list(currentUserId ?? 'currentUserID');
 
-    return Consumer<profile_details_provider>(builder: (context, value, child) {
+    context
+        .read<ProfileDetailsProvider>()
+        .profileDetailsList(authProvider.getUserFirebaseId().toString());
+
+    return Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
       return value.map["data"]["userData"] != null
           ? Center(
               child: GridView.builder(

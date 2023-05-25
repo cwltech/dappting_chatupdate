@@ -12,7 +12,6 @@ import 'package:dapp/providers/chat_provider.dart';
 import 'package:dapp/providers/coin_deduction_provider.dart';
 import 'package:dapp/providers/country_provider.dart';
 import 'package:dapp/providers/female_details_provider.dart';
-import 'package:dapp/providers/home_provider.dart';
 import 'package:dapp/providers/keyboard_provider.dart';
 import 'package:dapp/providers/package_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
@@ -97,10 +96,10 @@ class MyApp extends StatelessWidget {
             create: (context) => regular_package_provider()),
         ChangeNotifierProvider<virtual_gift_provider>(
             create: (context) => virtual_gift_provider()),
-        ChangeNotifierProvider<profile_details_provider>(
-            create: (context) => profile_details_provider()),
-        ChangeNotifierProvider<coin_deduction_provider>(
-            create: (context) => coin_deduction_provider()),
+        ChangeNotifierProvider<ProfileDetailsProvider>(
+            create: (context) => ProfileDetailsProvider()),
+        ChangeNotifierProvider<CoinDeductionProvider>(
+            create: (context) => CoinDeductionProvider()),
         ChangeNotifierProvider<block_list_provider>(
             create: (context) => block_list_provider()),
         ChangeNotifierProvider<female_details_provider>(
@@ -113,18 +112,6 @@ class MyApp extends StatelessWidget {
         ),
         Provider<SettingProvider>(
           create: (_) => SettingProvider(
-            prefs: prefs,
-            firebaseFirestore: firebaseFirestore,
-            firebaseStorage: firebaseStorage,
-          ),
-        ),
-        Provider<HomeProvider>(
-          create: (_) => HomeProvider(
-            firebaseFirestore: firebaseFirestore,
-          ),
-        ),
-        Provider<ChatProvider>(
-          create: (_) => ChatProvider(
             prefs: prefs,
             firebaseFirestore: firebaseFirestore,
             firebaseStorage: firebaseStorage,

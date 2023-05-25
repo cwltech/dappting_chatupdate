@@ -281,7 +281,7 @@ class _sign_up extends State<login> {
             var otpdetail = mapRes["data"]["otp"];
             var user_id = mapRes["data"]["user_id"];
             var type = mapRes["data"]["type"];
-            print("user_id$user_id");
+            print("user_id $user_id");
 
             if (type == "User") {
               setState(() {
@@ -292,6 +292,7 @@ class _sign_up extends State<login> {
                 prefs.setString(AppKeys.loginUserID, user_id);
 
                 userdata(user_id);
+                print("Check User Id Save ======= >>> $user_id");
               });
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => otp_screen()));

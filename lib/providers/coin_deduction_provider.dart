@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class coin_deduction_provider with ChangeNotifier {
+class CoinDeductionProvider with ChangeNotifier {
   Map<String, dynamic> map = {};
   bool error = false;
   String errormessage = '';
@@ -12,7 +12,7 @@ class coin_deduction_provider with ChangeNotifier {
   bool get _error => error;
   String get _errormessage => errormessage;
 
-  Future<void> coin_deduction_list(
+  Future<void> coinDeductionList(
       String userId, String host_id, String coins, String sec) async {
     String postUrl =
         "https://hookupindia.in/hookup/ApiController/coinDeduction";

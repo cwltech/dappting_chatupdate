@@ -83,11 +83,9 @@ class _home extends State<home_home> {
               icon: InkWell(
                 onDoubleTap: () {
                   print('clicktab');
-                  // home_home();
                 },
                 child: const ImageIcon(
                   AssetImage("assets/home.png"),
-                  // color: Colors.white,
                   size: 30,
                 ),
               ),
@@ -96,7 +94,6 @@ class _home extends State<home_home> {
             const BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage("assets/hot.png"),
-                // color: Colors.white,
                 size: 30,
               ),
               label: "",

@@ -1,10 +1,6 @@
-import 'dart:developer';
-
 import 'package:dapp/aboutus.dart';
 import 'package:dapp/block_list.dart';
-import 'package:dapp/editprofile.dart';
 import 'package:dapp/home_activity.dart';
-import 'package:dapp/myprofile.dart';
 import 'package:dapp/wallet.dart';
 import 'package:flutter/material.dart';
 
@@ -49,13 +45,13 @@ class _drawer extends State<drawer> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios,
                 color: Colors.black,
               ),
             ),
             backgroundColor: Colors.transparent,
-            title: Text.rich(
+            title: const Text.rich(
               TextSpan(
                 children: [
                   TextSpan(
@@ -77,13 +73,13 @@ class _drawer extends State<drawer> {
                   width: MediaQuery.of(context).size.width,
                   child: ListView(shrinkWrap: true, children: [
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Home",
                         style: TextStyle(
                             color: Color(0xffCC0000),
                             fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.black,
                       ),
@@ -109,13 +105,13 @@ class _drawer extends State<drawer> {
                     //   },
                     // ),
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Block List",
                         style: TextStyle(
                             color: Color(0xffCC0000),
                             fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.black,
                       ),
@@ -125,13 +121,13 @@ class _drawer extends State<drawer> {
                       },
                     ),
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "My Balance",
                         style: TextStyle(
                             color: Color(0xffCC0000),
                             fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.black,
                       ),
@@ -142,13 +138,13 @@ class _drawer extends State<drawer> {
                     ),
 
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "About us",
                         style: TextStyle(
                             color: Color(0xffCC0000),
                             fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.black,
                       ),
@@ -160,13 +156,13 @@ class _drawer extends State<drawer> {
                       },
                     ),
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Logout",
                         style: TextStyle(
                             color: Color(0xffCC0000),
                             fontWeight: FontWeight.w600),
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.black,
                       ),

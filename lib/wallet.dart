@@ -38,10 +38,11 @@ class _mybalance extends State<mybalance> {
   var packagedata;
   String type = "";
   String plan_id = "";
+
   @override
   Widget build(BuildContext context) {
     context.read<package_provider>().package_list(user_id);
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     context.read<vip_package_provider>().package_list(user_id);
     context.read<regular_package_provider>().package_list(user_id);
 
@@ -104,7 +105,7 @@ class _mybalance extends State<mybalance> {
               elevation: 0.0,
             ),
             body: SingleChildScrollView(child:
-                Consumer2<package_provider, profile_details_provider>(
+                Consumer2<package_provider, ProfileDetailsProvider>(
                     builder: (context, value, value2, child) {
               return value.map["data"]["HostList"] != null
                   ? Column(
@@ -285,7 +286,7 @@ class _mybalance extends State<mybalance> {
   }
 
   Widget wallet_w() {
-    return Consumer3<profile_details_provider, vip_package_provider,
+    return Consumer3<ProfileDetailsProvider, vip_package_provider,
             regular_package_provider>(
         builder: (context, value, value2, value3, child) {
       return value.map["data"] != null

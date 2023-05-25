@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../constants/color_constants.dart';
 import '../models/models.dart';
 import '../providers/auth_provider.dart';
-import '../providers/home_provider.dart';
 import '../utils/debouncer.dart';
 import '../widgets/widgets.dart';
 import 'pages.dart';
@@ -35,7 +34,7 @@ class HomePageState extends State<chat_home_list> {
   var user_id;
   late AuthProvider authProvider;
   late String currentUserId;
-  late HomeProvider homeProvider;
+
   Debouncer searchDebouncer = Debouncer(milliseconds: 300);
   StreamController<bool> btnClearController = StreamController<bool>();
   TextEditingController searchBarTec = TextEditingController();
@@ -187,8 +186,6 @@ class HomePageState extends State<chat_home_list> {
 
   @override
   Widget build(BuildContext context) {
-    homeProvider = context.read<HomeProvider>();
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,

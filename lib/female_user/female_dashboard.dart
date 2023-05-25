@@ -1,18 +1,16 @@
 import 'dart:convert';
 import 'dart:ui';
-import 'package:dapp/editprofile.dart';
+
 import 'package:dapp/female_user/female_edit_profile.dart';
-import 'package:dapp/providers/female_details_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:dapp/female_user/female_balance.dart';
 import 'package:dapp/invitevideocall.dart';
+import 'package:dapp/providers/female_details_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:blinking_text/blinking_text.dart';
 
 class female_dash extends StatefulWidget {
   @override
@@ -49,7 +47,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
       livestatus(user_id, "0");
     } else if (state == AppLifecycleState.resumed) {
       print('app resumed');
-      context.read<profile_details_provider>().profile_details_list(user_id);
+      context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     }
   }
 
@@ -57,14 +55,14 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       user_id = prefs.getString("user_id");
-      context.read<profile_details_provider>().profile_details_list(user_id);
+      print("blodid $user_id");
+      context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     });
-    print("blodid $user_id");
   }
 
   @override
   Widget build(BuildContext context) {
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     context.read<female_details_provider>().female_details(user_id);
     return Stack(
       children: [
@@ -77,7 +75,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
         Scaffold(
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
-            child: Consumer2<profile_details_provider, female_details_provider>(
+            child: Consumer2<ProfileDetailsProvider, female_details_provider>(
                 builder: (context, value, value2, child) {
               print("valuep$value");
               return value.map.length == 0 && !value.error

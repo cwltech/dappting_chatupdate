@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dapp/constants/constants.dart';
 import 'package:dapp/drawer_option.dart';
 import 'package:dapp/loading_bar.dart';
 import 'package:dapp/login.dart';
@@ -47,7 +48,7 @@ class _myprofile extends State<myprofile> {
   var looking_partner = TextEditingController();
   var relationship = TextEditingController();
 
-  var user_id;
+  var userId;
   File? imageFile;
   List nicknamed = [];
   String? nicknameval;
@@ -76,6 +77,7 @@ class _myprofile extends State<myprofile> {
   List citylist = [];
   String? cityval = null;
 
+  @override
   void initState() {
     super.initState();
     context.read<apperance_provider>().apperance_list();
@@ -87,21 +89,22 @@ class _myprofile extends State<myprofile> {
     context.read<education_provider>().eductaion_list();
     context.read<country_provider>().country_list();
     Future.delayed(const Duration(seconds: 2), () {});
-    get_blogdetails(context);
+    getUserDetails(context);
   }
 
-  get_blogdetails(BuildContext context) async {
+  /* Get User ID From From Local Function */
+  getUserDetails(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      user_id = prefs.getString("user_id");
-      context.read<profile_details_provider>().profile_details_list(user_id);
+      userId = prefs.getString(FirestoreConstants.id);
+      context.read<ProfileDetailsProvider>().profileDetailsList(userId);
     });
-    print("bloduser $user_id");
+    print("User Profile ID 🍆🍆🍆🍆 ==========> $userId");
   }
 
   @override
   Widget build(BuildContext context) {
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(userId);
 
     return Stack(
       children: [
@@ -116,6 +119,7 @@ class _myprofile extends State<myprofile> {
                 //  backgroundColor: Color(0xffCC0000),
                 backgroundColor: Colors.transparent,
                 appBar: AppBar(
+                  elevation: 0.0,
                   automaticallyImplyLeading: false,
                   centerTitle: true,
                   // leading: Icon(
@@ -139,12 +143,14 @@ class _myprofile extends State<myprofile> {
                     Padding(
                       padding: const EdgeInsets.only(right: 4.0),
                       child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.logout,
-                              color: Colors.black,
-                              size: 28,
+                        children: <Widget>[
+                          TextButton(
+                            child: const Text(
+                              "Logout",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
                             ),
                             onPressed: () async {
                               SharedPreferences prefrences =
@@ -157,24 +163,16 @@ class _myprofile extends State<myprofile> {
                               });
                             },
                           ),
-                          // Text(
-                          //   "Logout",
-                          //   style: TextStyle(
-                          //       color: Colors.red,
-                          //       fontSize: 13,
-                          //       fontWeight: FontWeight.bold),
-                          // )
                         ],
                       ),
                     ),
                   ],
-                  elevation: 0.0,
                 ),
                 body: SingleChildScrollView(child:
-                    Consumer<profile_details_provider>(
+                    Consumer<ProfileDetailsProvider>(
                         builder: (context, value, child) {
-                  print("valuep$value");
-                  return value.map.length == 0 && !value.error
+                  print("User Profile Data $value");
+                  return value.map.isEmpty && !value.error
                       ? const CircularProgressIndicator()
                       : value.error
                           ? const Text("Opps SOmething went wrong")
@@ -244,8 +242,8 @@ class _myprofile extends State<myprofile> {
                                                                     "profile_image"],
                                                                 width: 90,
                                                                 height: 90,
-                                                                fit:
-                                                                    BoxFit.fill,
+                                                                fit: BoxFit
+                                                                    .cover,
                                                               )
                                                             : Icon(
                                                                 Icons.person,
@@ -286,12 +284,10 @@ class _myprofile extends State<myprofile> {
                                       child: Center(
                                         child: Text(
                                           value.map["data"]["userData"]
-                                                  ["fname"] ??
+                                                  ["fname"] +
                                               " " +
-                                                  " " +
-                                                  value.map["data"]["userData"]
-                                                      ["lname"] ??
-                                              " ",
+                                              value.map["data"]["userData"]
+                                                  ["lname"],
                                           style: const TextStyle(
                                               color: Color(0xffCC0000),
                                               fontSize: 17,
@@ -300,17 +296,19 @@ class _myprofile extends State<myprofile> {
                                       ),
                                     ),
 
-                                    // Padding(
-                                    //   padding: const EdgeInsets.only(top: 0.0, bottom: 8),
-                                    //   child: Center(
-                                    //     child: Text(
-                                    //       "ID:14788888",
-                                    //       style: TextStyle(
-                                    //       color: Colors.grey,
-                                    //       fontSize: 13,
-                                    //     ),),
-                                    //   ),
-                                    // ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 0.0, bottom: 8),
+                                      child: Center(
+                                        child: Text(
+                                          userId.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
 
                                     Padding(
                                       padding: const EdgeInsets.only(
@@ -480,7 +478,7 @@ class _myprofile extends State<myprofile> {
                                                               .centerLeft,
                                                           child: InkWell(
                                                             onTap: () {
-                                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => mybalance()));
+                                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyBalance()));
                                                             },
                                                             child: const Text(
                                                               " Premium / VIP",
@@ -769,7 +767,7 @@ class _myprofile extends State<myprofile> {
     context.read<maritial_provider>().maritial_list();
     context.read<education_provider>().eductaion_list();
     context.read<country_provider>().country_list();
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(userId);
 
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -795,8 +793,8 @@ class _myprofile extends State<myprofile> {
             elevation: 0.0,
           ),
         ),
-        body: SingleChildScrollView(child: Consumer<profile_details_provider>(
-            builder: (context, value, child) {
+        body: SingleChildScrollView(child:
+            Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
           fname.text = value.map["data"]["userData"]["fname"] ?? "";
           lname.text = value.map["data"]["userData"]["lname"] ?? "";
           pincode.text = value.map["data"]["userData"]["pincode"] ?? "";
@@ -804,7 +802,7 @@ class _myprofile extends State<myprofile> {
 
           print("valuep$value");
           return value.map.length == 0 && !value.error
-              ? Center(child: const CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : value.error
                   ? const Text("Opps SOmething went wrong")
                   : value.map["data"]["userData"] != null
@@ -1991,7 +1989,7 @@ class _myprofile extends State<myprofile> {
                                     ? const CircularProgressIndicator()
                                     : value.error
                                         ? const Text(
-                                            "Opps SOmething went wrong")
+                                            "Opps Something went wrong")
                                         :
                                         // InkWell(
                                         //   onTap: () {
@@ -2215,7 +2213,7 @@ class _myprofile extends State<myprofile> {
                                         fname.text,
                                         lname.text,
                                         "",
-                                        user_id,
+                                        userId,
                                         nickname.text,
                                         countryval != null ? countryval! : "",
                                         stateval != null ? stateval! : "",

@@ -1,17 +1,18 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:dapp/female_user/female_home_activity.dart';
 import 'package:dapp/loading_bar.dart';
 import 'package:dapp/providers/country_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
 import 'package:dapp/providers/profile_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -109,7 +110,7 @@ class _myprofile extends State<female_edit_profile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       user_id = prefs.getString("user_id");
-      context.read<profile_details_provider>().profile_details_list(user_id);
+      context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
     });
     print("blodid $user_id");
   }
@@ -148,7 +149,7 @@ class _myprofile extends State<female_edit_profile> {
     context.read<english_provider>().english_list();
     context.read<eye_color_provider>().eye_color_list();
     context.read<hair_color_provider>().hair_color_list();
-    context.read<profile_details_provider>().profile_details_list(user_id);
+    context.read<ProfileDetailsProvider>().profileDetailsList(user_id);
 
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -192,8 +193,8 @@ class _myprofile extends State<female_edit_profile> {
             elevation: 0.0,
           ),
         ),
-        body: SingleChildScrollView(child: Consumer<profile_details_provider>(
-            builder: (context, value, child) {
+        body: SingleChildScrollView(child:
+            Consumer<ProfileDetailsProvider>(builder: (context, value, child) {
           fname.text = value.map["data"]["userData"]["fname"] ?? "";
           lname.text = value.map["data"]["userData"]["lname"] ?? "";
           pincode.text = value.map["data"]["userData"]["pincode"] ?? "";

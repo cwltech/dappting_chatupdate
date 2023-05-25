@@ -1,10 +1,10 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 
-class female_balance extends StatefulWidget{
+class female_balance extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-     return _female_balance();
+    return _female_balance();
   }
 }
 
@@ -15,46 +15,46 @@ class _female_balance extends State<female_balance> {
       children: [
         Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Stack(children: [
-                  Container(
-                    width: double.maxFinite,
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
-                  ),
-                  Opacity(
-                      opacity: 0.9,
-                      child: Image.asset(
-                          'assets/hearts_1.png',
-                          width: double.maxFinite,
-                          height: MediaQuery.of(context).size.height,
-                          fit: BoxFit.cover)),
-                ]),
-              ],
-            )
-        ),
-
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            centerTitle: true,
-            leading: Icon(Icons.arrow_back_ios,color: Colors.black,),
-            backgroundColor: Colors.transparent,
-            title: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: "My Balance",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      )
-                  ),
-                ],
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Stack(children: [
+              Container(
+                width: double.maxFinite,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white,
               ),
+              Opacity(
+                  opacity: 0.9,
+                  child: Image.asset('assets/hearts_1.png',
+                      width: double.maxFinite,
+                      height: MediaQuery.of(context).size.height,
+                      fit: BoxFit.cover)),
+            ]),
+          ],
+        )),
+        Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              centerTitle: true,
+              leading: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+              ),
+              backgroundColor: Colors.transparent,
+              title: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                        text: "My Balance",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        )),
+                  ],
+                ),
+              ),
+              elevation: 0.0,
             ),
-            elevation: 0.0,
-          ),
             body: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -78,9 +78,12 @@ class _female_balance extends State<female_balance> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("My Balance :",style: TextStyle(
-                          color: Colors.white,
-                        ),),
+                        Text(
+                          "My Balance :",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                         SizedBox(
                           height: 8,
                         ),
@@ -88,7 +91,7 @@ class _female_balance extends State<female_balance> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
-                                width:30,
+                                width: 30,
                                 height: 30,
                                 child: Image.asset("assets/bigcoin.png")),
                             Text("  24",
@@ -101,7 +104,6 @@ class _female_balance extends State<female_balance> {
                       ],
                     ),
                   ),
-
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     color: Colors.transparent,
@@ -116,17 +118,22 @@ class _female_balance extends State<female_balance> {
                         unselectedLabelColor: Colors.grey[400],
                       ),
                       tabs: [
-                        Text('Deposit',
+                        Text(
+                          'Deposit',
                           style: TextStyle(
                             //color: Colors.red,
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                          ),),
-                        Text('Withdrawal', style: TextStyle(
-                          //color: Colors.red,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),),
+                          ),
+                        ),
+                        Text(
+                          'Withdrawal',
+                          style: TextStyle(
+                            //color: Colors.red,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                       views: [
                         Center(child: Text("No Data Found")),
@@ -139,8 +146,7 @@ class _female_balance extends State<female_balance> {
                   ),
                 ],
               ),
-            )
-        ),
+            )),
       ],
     );
   }
