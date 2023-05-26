@@ -41,7 +41,8 @@ class ChatListMessageProvider with ChangeNotifier {
         if (response.statusCode == 200) {
           try {
             map = json.decode(onValue.body);
-            print("Chat List Print ================> $map");
+            print(
+                "Chat List Print(JSON DATA) 🍞🍞🍞🍞🍞🍞================> $map");
             error = false;
           } catch (e) {
             error = true;

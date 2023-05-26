@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dapp/constants/app.keys.dart';
 import 'package:dapp/loading_bar.dart';
 import 'package:dapp/payment_stripe.dart';
 import 'package:dapp/providers/profile_provider.dart';
@@ -23,7 +24,6 @@ class OptionsScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _OptionsScreen();
   }
 }
@@ -276,7 +276,8 @@ class _OptionsScreen extends State<OptionsScreen> {
                                                                         "live_status"]
                                                                     .toString() ==
                                                                 "0"
-                                                            ? Color(0xffCC0000)
+                                                            ? const Color(
+                                                                    0xffCC0000)
                                                                 .withOpacity(
                                                                     0.4)
                                                             : Colors.green
@@ -296,7 +297,8 @@ class _OptionsScreen extends State<OptionsScreen> {
                                                                   "0"
                                                               ? "Offline"
                                                               : "Online",
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color: Colors.white,
@@ -412,7 +414,7 @@ class _OptionsScreen extends State<OptionsScreen> {
                                                                 //       username: user_id,
                                                                 //     )));
                                                               },
-                                                              child: Icon(
+                                                              child: const Icon(
                                                                 Icons.videocam,
                                                                 color: Colors
                                                                     .white,
@@ -428,72 +430,21 @@ class _OptionsScreen extends State<OptionsScreen> {
                                           ),
                                         ),
                                       )
-                                    : Center(
+                                    : const Center(
                                         child: SizedBox(
                                             width: 20,
                                             height: 20,
                                             child: CircularProgressIndicator()),
                                       ),
-                                // ),
                               ),
                             ),
-                            /*Row(
-                      children: [
-                        CircleAvatar(
-                          child: Icon(Icons.person, size: 18),
-                          radius: 16,
-                        ),
-                        SizedBox(width: 6),
-                        Text('flutter_developer02'),
-                        SizedBox(width: 10),
-                        Icon(Icons.verified, size: 15),
-                        SizedBox(width: 6),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Follow',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ), */
-                            /*SizedBox(width: 6),
-                    Text('Flutter is beautiful and fast 💙❤💛 ..'),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.music_note,
-                          size: 15,
-                        ),
-                        Text('Original Audio - some music track--'),
-                      ],
-                    ), */
                           ],
                         ),
-                        /* Column(
-                  children: [
-                    Icon(Icons.favorite_outline),
-                    Text('601k'),
-                    SizedBox(height: 20),
-                    Icon(Icons.comment_rounded),
-                    Text('1123'),
-                    SizedBox(height: 20),
-                    Transform(
-                      transform: Matrix4.rotationZ(5.8),
-                      child: Icon(Icons.send),
-                    ),
-                    SizedBox(height: 50),
-                    Icon(Icons.more_vert),
-                  ],
-                )*/
                       ],
                     ),
                   ],
                 )
-              : Center(
+              : const Center(
                   child: SizedBox(
                       width: 20,
                       height: 20,
@@ -542,7 +493,7 @@ class _OptionsScreen extends State<OptionsScreen> {
                             )),
                             TextSpan(
                                 text: balance,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 13,
                                 )),
@@ -590,22 +541,22 @@ class _OptionsScreen extends State<OptionsScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Center(
                       child: Text(
                     membership[index]["coins"],
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 13,
                     ),
                   )),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Center(
                       child: Text(
                     "₹ " + membership[index]["price"],
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 17,
                         fontWeight: FontWeight.bold),
@@ -660,7 +611,7 @@ class _OptionsScreen extends State<OptionsScreen> {
   void initState() {
     super.initState();
     get_blogdetails(context);
-    razorpay = new Razorpay();
+    razorpay = Razorpay();
 
     // razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     // razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -670,7 +621,7 @@ class _OptionsScreen extends State<OptionsScreen> {
   get_blogdetails(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      user_id = prefs.getString("user_id");
+      user_id = prefs.getString(AppKeys.loginUserID);
       getmembership(user_id);
     });
     print("blodid $user_id");
@@ -680,7 +631,7 @@ class _OptionsScreen extends State<OptionsScreen> {
     //replace your restFull API here.
     String url = "https://hookupindia.in/hookup/ApiController/regularPackage";
     final response = await http.get(Uri.parse(url));
-    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    var request = http.MultipartRequest("POST", Uri.parse(url));
     request.fields['user_id'] = userId;
     request.send().then((response) {
       http.Response.fromStream(response).then((onValue) {
@@ -724,10 +675,6 @@ class _OptionsScreen extends State<OptionsScreen> {
     razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
     razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
     razorpay!.open(options);
-
-    // }catch(e){
-    //   print(e.toString());
-    // }
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
@@ -765,12 +712,13 @@ class _OptionsScreen extends State<OptionsScreen> {
         timeInSecForIosWeb: 1);
   }
 
+  /*-----------> Like Api <-------------*/
   like(String UserId, String friend_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String postUrl = "https://hookupindia.in/hookup/ApiController/likeUser";
     print("stringrequest");
     print("user_id $UserId");
-    var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
+    var request = http.MultipartRequest("POST", Uri.parse(postUrl));
     request.fields['user_id'] = UserId;
     request.fields['friend_id'] = friend_id;
     request.send().then((response) {
@@ -789,12 +737,12 @@ class _OptionsScreen extends State<OptionsScreen> {
     });
   }
 
+  /*-----------> Dislike Api <-------------*/
   dislikelike(String UserId, String friend_id) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String postUrl = "https://hookupindia.in/hookup/ApiController/unlikeUser";
     print("stringrequest");
     print("user_id $UserId");
-    var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
+    var request = http.MultipartRequest("POST", Uri.parse(postUrl));
     request.fields['user_id'] = UserId;
     request.fields['friend_id'] = friend_id;
     request.send().then((response) {
@@ -812,5 +760,4 @@ class _OptionsScreen extends State<OptionsScreen> {
       });
     });
   }
-//
 }

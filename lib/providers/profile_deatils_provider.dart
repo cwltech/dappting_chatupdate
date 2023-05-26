@@ -17,13 +17,13 @@ class profile_details_provider with ChangeNotifier {
     print("stringrequest");
     var request = http.MultipartRequest("POST", Uri.parse(postUrl));
     request.fields['user_id'] = userId.toString();
-    print("hahahahh ==== > $userId");
+    print(" User Detail ID(User ID)🍑🍑🍑🍑🍑🍑🍑🍑 ==== > $userId");
     request.send().then((response) {
       http.Response.fromStream(response).then((onValue) {
         if (response.statusCode == 200) {
           try {
             map = json.decode(onValue.body);
-            print("User From Current Api =========> 🍧🍧🍧🍧 $map");
+            print("User From Current Api{JSON DATA} 🍧🍧🍧🍧 =========>  $map");
             error = false;
           } catch (e) {
             error = true;

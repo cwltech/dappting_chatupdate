@@ -778,12 +778,13 @@ class hostlist_provider with ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.setString(FirestoreConstants.idTo, user_id);
       request.fields['user_id'] = user_id;
-
+      print("User Host List ID (REELS)🥬🥬🥬🥬🥬🥬 ========> $user_id");
       http.Response.fromStream(response).then((onValue) {
         if (response.statusCode == 200) {
           try {
             map = json.decode(onValue.body);
-            print("videovalue$map");
+            print(
+                "User Host Lists(JSON DATA) 🥦🥦🥦🥦🥦🥦🥦🥦============> $map");
             error = false;
           } catch (e) {
             error = true;

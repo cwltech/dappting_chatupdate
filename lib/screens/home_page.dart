@@ -1,4 +1,5 @@
 import 'package:card_swiper/card_swiper.dart';
+import 'package:dapp/constants/constants.dart';
 import 'package:dapp/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class _home_userState extends State<home_user> {
   get_blogdetails(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      user_id = prefs.getString("user_id");
+      user_id = prefs.getString(FirestoreConstants.id);
     });
     print("blodid $user_id");
   }
