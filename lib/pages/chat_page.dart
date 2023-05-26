@@ -9,6 +9,7 @@ import 'package:dapp/wallet.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +89,7 @@ class ChatPageState extends State<ChatPage> {
         (Timer t) => setState(() {
               _fetchMessage();
             }));
-
+    chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
     giftProvider = context.read<virtual_gift_provider>();
     focusNode.addListener(onFocusChange);
@@ -217,7 +218,20 @@ class ChatPageState extends State<ChatPage> {
                             },
                           );
                         } else {
-                          //
+                          onSendMessage(data["GiftList"][index]["gift_image"],
+                              TypeMessage.sticker);
+                          coin_deduction(
+                              currentUserId!,
+                              widget.arguments.peerId,
+                              data["GiftList"][index]["gift_credit"],
+                              "",
+                              "virtual_gift");
+                          chatingDetails(
+                              currentUserId!,
+                              widget.arguments.peerId,
+                              "1",
+                              data["GiftList"][index]["gift_image"],
+                              data["GiftList"][index]["gift_id"].toString());
                         }
                       }
                       // }
@@ -324,20 +338,21 @@ class ChatPageState extends State<ChatPage> {
     });
   }
 
-  // void onSendMessage(String content, int type) {
-  //   if (content.trim().isNotEmpty) {
-  //     textEditingController.clear();
-  //     chatProvider.sendMessage(content, type, groupChatId,
-  //         currentUserId ?? 'currentUserID', widget.arguments.peerId);
-  //     if (listScrollController.hasClients) {
-  //       listScrollController.animateTo(0,
-  //           duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-  //     }
-  //   } else {
-  //     Fluttertoast.showToast(
-  //         msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
-  //   }
-  // }
+  late ChatProvider chatProvider;
+  void onSendMessage(String content, int type) {
+    if (content.trim().isNotEmpty) {
+      textEditingController.clear();
+      chatProvider.sendMessage(content, type, groupChatId,
+          currentUserId ?? 'currentUserID', widget.arguments.peerId);
+      if (listScrollController.hasClients) {
+        listScrollController.animateTo(0,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
+    }
+  }
 
   // bool isLastMessageLeft(int index) {
   //   if ((index > 0 &&

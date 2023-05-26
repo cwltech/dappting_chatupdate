@@ -1,4 +1,5 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
+import 'package:dapp/constants/constants.dart';
 import 'package:dapp/loading_bar.dart';
 import 'package:dapp/payment_stripe.dart';
 import 'package:dapp/providers/package_provider.dart';
@@ -115,12 +116,12 @@ class _mybalance extends State<mybalance> {
                         Container(
                           width: MediaQuery.of(context).size.width,
                           height: 150,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                const Color(0xFFFEB974),
-                                const Color(0xFF944C1E),
-                                const Color(0xFF772F1A),
+                                Color(0xFFFEB974),
+                                Color(0xFF944C1E),
+                                Color(0xFF772F1A),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -145,7 +146,7 @@ class _mybalance extends State<mybalance> {
                                       borderRadius: BorderRadius.circular(30),
                                       color: Colors.black,
                                     ),
-                                    child: Align(
+                                    child: const Align(
                                       alignment: Alignment.center,
                                       child: Text(
                                         "Subscribe Now",
@@ -167,7 +168,7 @@ class _mybalance extends State<mybalance> {
                                   child: Row(
                                     // mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Align(
+                                      const Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
                                           "5% discount on Membership Card",
@@ -181,10 +182,11 @@ class _mybalance extends State<mybalance> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(top: 6, left: 12),
+                                  padding:
+                                      const EdgeInsets.only(top: 6, left: 12),
                                   child: Row(
                                     children: [
-                                      Align(
+                                      const Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
                                           "Pay for itself only about one purchase",
@@ -200,7 +202,7 @@ class _mybalance extends State<mybalance> {
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 12, right: 15, top: 100),
                               child: Align(
                                 alignment: Alignment.bottomCenter,
@@ -214,7 +216,7 @@ class _mybalance extends State<mybalance> {
                                         value.map["data"]["HostList"][0]
                                                 ["PlanName"] +
                                             "\nSubsribe now to check more about plans",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 14,
                                             fontWeight: FontWeight.normal),
@@ -224,7 +226,7 @@ class _mybalance extends State<mybalance> {
                                       "₹ " +
                                           value.map["data"]["HostList"][0]
                                               ["PlanPrice"],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
@@ -244,12 +246,12 @@ class _mybalance extends State<mybalance> {
                             tabBarProperties: TabBarProperties(
                               //height: 32.0,
                               labelColor: Colors.red,
-                              indicatorColor: Color(0xff07D3DF),
+                              indicatorColor: const Color(0xff07D3DF),
                               indicatorWeight: 1.0,
                               unselectedLabelColor: Colors.grey[400],
                             ),
                             tabs: [
-                              Text(
+                              const Text(
                                 'Wallet',
                                 style: TextStyle(
                                   //color: Colors.red,
@@ -257,7 +259,7 @@ class _mybalance extends State<mybalance> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 'Credit',
                                 style: TextStyle(
                                   //color: Colors.red,
@@ -278,7 +280,7 @@ class _mybalance extends State<mybalance> {
                         ),
                       ],
                     )
-                  : Center(
+                  : const Center(
                       child: CircularProgressIndicator(),
                     );
             })))
@@ -300,7 +302,7 @@ class _mybalance extends State<mybalance> {
                       "My Balance \u{1FA99} " +
                           value.map["data"]["userData"]["coins"].toString() +
                           " Coins",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xffCC0000),
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -320,7 +322,7 @@ class _mybalance extends State<mybalance> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Align(
+                          const Align(
                             alignment: Alignment.centerLeft,
                             child: Text(" Buy Coins",
                                 style: TextStyle(
@@ -329,7 +331,7 @@ class _mybalance extends State<mybalance> {
                                   fontWeight: FontWeight.bold,
                                 )),
                           ),
-                          Text(
+                          const Text(
                               " Buy Coins and unlock special features specially \n curated for you.",
                               style: TextStyle(
                                 color: Colors.grey,
@@ -344,7 +346,7 @@ class _mybalance extends State<mybalance> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: value.map["data"]["userData"]["membership_plan"]
                                 .toString() ==
                             "1"
@@ -369,9 +371,18 @@ class _mybalance extends State<mybalance> {
                           : value3.map["data"][i]["id"].toString();
                       return GestureDetector(
                         onTap: () {
-                          circle(context);
-                          payment_stripe.makepayment(context,
-                              packagedata[i]["price"], user_id, type, plan_id);
+                          setState(() async {
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            var user_id = pref.getString(FirestoreConstants.id);
+                            circle(context);
+                            payment_stripe.makepayment(
+                                context,
+                                packagedata[i]["price"],
+                                user_id!,
+                                type,
+                                packagedata[i]["id"].toString());
+                          });
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
@@ -379,7 +390,7 @@ class _mybalance extends State<mybalance> {
                             height: 40,
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color(0xff07D3DF), width: 1),
+                                    color: const Color(0xff07D3DF), width: 1),
                                 borderRadius: BorderRadius.circular(10)),
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
@@ -398,7 +409,7 @@ class _mybalance extends State<mybalance> {
                                         " " +
                                             packagedata[i]["coins"] +
                                             " Coins",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -410,29 +421,28 @@ class _mybalance extends State<mybalance> {
                                     children: [
                                       Text(
                                         packagedata[i]["name"] ?? "",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 10,
                                           color: Color(0xffCC0000),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 4,
                                       ),
                                       Container(
                                         width: 50,
                                         height: 20,
                                         decoration: BoxDecoration(
-                                            color: Color(0xffCC0000)
+                                            color: const Color(0xffCC0000)
                                                 .withOpacity(0.8),
                                             // border: Border.all(color: Color(0xff07D3DF),width: 1.5),
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         child: Center(
                                           child: Text(
-                                            "₹ " + packagedata[i]["price"] ??
-                                                "",
-                                            style: TextStyle(
+                                            "₹ " + packagedata[i]["price"],
+                                            style: const TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.white),
                                           ),
@@ -451,7 +461,7 @@ class _mybalance extends State<mybalance> {
                 ),
               ],
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             );
     });
@@ -477,7 +487,7 @@ class _mybalance extends State<mybalance> {
             padding: const EdgeInsets.only(top: 10.0, bottom: 10),
             child: Text(
               "Your Balance : $coins \u{1FA99} Coins",
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xffCC0000),
                 fontSize: 13,
               ),
@@ -488,7 +498,7 @@ class _mybalance extends State<mybalance> {
           padding: const EdgeInsets.only(top: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: const <Widget>[
               Text(
                 "Credit Balance",
                 style: TextStyle(
@@ -511,7 +521,7 @@ class _mybalance extends State<mybalance> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Exchange to Coins",
                 style: TextStyle(
                   color: Colors.black,
@@ -525,7 +535,7 @@ class _mybalance extends State<mybalance> {
                     width: 12,
                     height: 12,
                   ),
-                  Text(
+                  const Text(
                     " 0",
                     style: TextStyle(
                       color: Colors.black,
@@ -542,10 +552,10 @@ class _mybalance extends State<mybalance> {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 35,
-            color: Color(0xffCC0000),
+            color: const Color(0xffCC0000),
             child: TextButton(
               onPressed: () {},
-              child: Text(
+              child: const Text(
                 "EXCHANGE",
                 textAlign: TextAlign.center,
                 style: TextStyle(

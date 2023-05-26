@@ -8,6 +8,8 @@ import 'package:dapp/login.dart';
 import 'package:dapp/providers/country_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
 import 'package:dapp/providers/profile_provider.dart';
+import 'package:dapp/screens/male.edit.profile.dart';
+import 'package:dapp/screens/male.profile.view.dart';
 import 'package:dapp/wallet.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +187,11 @@ class _myprofile extends State<myprofile> {
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
-                                            editprof = true;
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const MaleEditProfileSetting()));
                                           });
                                           //Navigator.of(context).push(MaterialPageRoute(builder: (context) => edit_profile()));
                                         },
@@ -266,11 +272,20 @@ class _myprofile extends State<myprofile> {
                                                     child: Image.asset(
                                                         "assets/profile_eyecircle.png")),
                                                 // Front image
-                                                SizedBox(
-                                                    width: 16,
-                                                    height: 16,
-                                                    child: Image.asset(
-                                                        "assets/ssetting.png")),
+                                                InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const MaleProfileSetting()));
+                                                  },
+                                                  child: SizedBox(
+                                                      width: 16,
+                                                      height: 16,
+                                                      child: Image.asset(
+                                                          "assets/ssetting.png")),
+                                                ),
                                               ],
                                             ),
                                           ],
@@ -471,24 +486,19 @@ class _myprofile extends State<myprofile> {
                                                             top: 8.0, left: 6),
                                                     child: Row(
                                                       // mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
+                                                      children: const [
                                                         Align(
                                                           alignment: Alignment
                                                               .centerLeft,
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => mybalance()));
-                                                            },
-                                                            child: const Text(
-                                                              " Premium / VIP",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
+                                                          child: Text(
+                                                            " Premium / VIP",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ),
                                                       ],

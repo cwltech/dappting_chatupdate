@@ -9,7 +9,9 @@ class profile_details_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> profile_details_list(String userId) async {

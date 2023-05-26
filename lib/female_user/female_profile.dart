@@ -1,5 +1,4 @@
 import 'package:dapp/aboutus.dart';
-import 'package:dapp/female_user/female_edit_profile.dart';
 import 'package:dapp/login.dart';
 import 'package:dapp/providers/female_details_provider.dart';
 import 'package:dapp/providers/profile_deatils_provider.dart';
@@ -8,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../invitevideocall.dart';
+import 'female.edit.profile.dart';
+import 'female.profile.setting.dart';
 
 class female_profile extends StatefulWidget {
   @override
@@ -75,9 +76,9 @@ class _female_profile extends State<female_profile> {
                     builder: (context, value, value2, child) {
               print("valuep$value");
               return value.map.length == 0 && !value.error
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : value.error
-                      ? Text("Opps SOmething went wrong")
+                      ? const Text("Opps SOmething went wrong")
                       : value.map["data"]["userData"] != null
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -87,36 +88,30 @@ class _female_profile extends State<female_profile> {
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {});
-                                      //Navigator.of(context).push(MaterialPageRoute(builder: (context) => edit_profile()));
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const EditProfileSetting()));
                                     },
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        female_edit_profile()));
-                                          },
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              SizedBox(
-                                                  width: 30,
-                                                  height: 30,
-                                                  child: Image.asset(
-                                                      "assets/profile_eyecircle.png")),
-                                              // Front image
-                                              SizedBox(
-                                                  width: 16,
-                                                  height: 16,
-                                                  child: Image.asset(
-                                                      "assets/edit.png")),
-                                            ],
-                                          ),
+                                        Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            SizedBox(
+                                                width: 30,
+                                                height: 30,
+                                                child: Image.asset(
+                                                    "assets/profile_eyecircle.png")),
+                                            // Front image
+                                            SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: Image.asset(
+                                                    "assets/edit.png")),
+                                          ],
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
@@ -149,7 +144,8 @@ class _female_profile extends State<female_profile> {
                                                                 "profile_image"],
                                                             fit: BoxFit.fill,
                                                           )
-                                                        : Icon(Icons.person),
+                                                        : const Icon(
+                                                            Icons.person),
                                                   )),
                                             ],
                                           ),
@@ -175,12 +171,12 @@ class _female_profile extends State<female_profile> {
                                   ),
                                 ),
                                 Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 20.0, bottom: 8),
+                                  padding: const EdgeInsets.only(
+                                      top: 20.0, bottom: 8),
                                   child: Center(
                                     child: Text(
                                       value.map["data"]["userData"]["fname"],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Color(0xffCC0000),
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold),
@@ -188,11 +184,12 @@ class _female_profile extends State<female_profile> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(top: 0.0, bottom: 8),
+                                  padding: const EdgeInsets.only(
+                                      top: 0.0, bottom: 8),
                                   child: Center(
                                     child: Text(
                                       "ID:${value.map["data"]["userData"]["unique_id"]}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.grey,
                                         fontSize: 13,
                                       ),
@@ -284,7 +281,7 @@ class _female_profile extends State<female_profile> {
                                                                   "total_coins"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 12,
                                                       ),
@@ -385,7 +382,7 @@ class _female_profile extends State<female_profile> {
                                                                     "total_amount_in_wallet"]
                                                                 .toString() ??
                                                             "",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 12,
                                                         ),
@@ -531,7 +528,7 @@ class _female_profile extends State<female_profile> {
                                 ),
                               ],
                             )
-                          : Center(
+                          : const Center(
                               child: CircularProgressIndicator(),
                             );
             })))
