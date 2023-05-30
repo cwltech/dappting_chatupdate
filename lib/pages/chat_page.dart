@@ -191,7 +191,6 @@ class ChatPageState extends State<ChatPage> {
                   return TextButton(
                     onPressed: () async {
                       if (widget.type == "user") {
-                        //  else {
                         print(
                             "coinmap ${value.map["data"]["userData"]["coins"]}");
                         Future.delayed(const Duration(seconds: 2));
@@ -218,23 +217,26 @@ class ChatPageState extends State<ChatPage> {
                             },
                           );
                         } else {
+                          print(
+                              "Image Gift --------->${data["GiftList"][index]["gift_image"]}");
                           onSendMessage(data["GiftList"][index]["gift_image"],
                               TypeMessage.sticker);
                           coin_deduction(
-                              currentUserId!,
+                              currentUserId ??
+                                  authProvider.getUserFirebaseId().toString(),
                               widget.arguments.peerId,
                               data["GiftList"][index]["gift_credit"],
                               "",
                               "virtual_gift");
                           chatingDetails(
-                              currentUserId!,
+                              currentUserId ??
+                                  authProvider.getUserFirebaseId().toString(),
                               widget.arguments.peerId,
                               "1",
                               data["GiftList"][index]["gift_image"],
                               data["GiftList"][index]["gift_id"].toString());
                         }
                       }
-                      // }
                     },
                     child: Image.network(
                       data["GiftList"][index]["gift_image"],
@@ -339,6 +341,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   late ChatProvider chatProvider;
+
   void onSendMessage(String content, int type) {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
@@ -624,10 +627,6 @@ class ChatPageState extends State<ChatPage> {
   // TODO : Text Field For Message(Message)
   Widget messageInput() {
     onSendMessagesFunction() async {
-      if (listScrollController.hasClients) {
-        final position = listScrollController.position.maxScrollExtent;
-        listScrollController.position;
-      }
       if (_formKey.currentState!.validate()) {
         SharedPreferences pref = await SharedPreferences.getInstance();
         var userID = pref.getString(FirestoreConstants.id);
@@ -636,8 +635,13 @@ class ChatPageState extends State<ChatPage> {
         print("User To 📥📥📥📥📥📥 -----------> ${widget.arguments.peerId}");
         print("Message 📄📄📄📄📄 =========> ${TypeMessage.text}");
         print("Message Print 🖨 -------------> ${textEditingController.text}");
-        chatingDetails(userID.toString(), widget.arguments.peerId,
-            TypeMessage.text.toString(), textEditingController.text, "");
+        print("Sticker Type =====> ${TypeMessage.sticker}");
+        chatingDetails(
+            userID.toString(),
+            widget.arguments.peerId,
+            TypeMessage.text.toString(),
+            textEditingController.text,
+            TypeMessage.sticker.toString());
         setState(() {
           textEditingController.clear();
         });
@@ -728,6 +732,7 @@ class ChatPageState extends State<ChatPage> {
       final dataList = state.map["data"];
       return state.map.isNotEmpty
           ? ListView.separated(
+              reverse: true,
               controller: listScrollController,
               itemCount: dataList.length,
               itemBuilder: (BuildContext context, int index) {

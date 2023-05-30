@@ -1,11 +1,14 @@
-import 'dart:convert';
-
+import 'package:dapp/constants/constants.dart';
+import 'package:dapp/providers/coin_deduction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+
+import 'constants/app_constants.dart';
 
 var starttime;
 var endtime;
@@ -49,6 +52,7 @@ class CallInvitationPage extends StatelessWidget {
                 : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
 
         // Modify your custom configurations here.
+
         config.onHangUpConfirmation = (BuildContext context) async {
           return await showDialog(
             context: context,
@@ -71,14 +75,11 @@ class CallInvitationPage extends StatelessWidget {
                     onPressed: () {
                       if (type == "user") {
                         endtime = DateTime.now();
-                        //  Future.delayed(Duration(seconds: 1));
+                        Future.delayed(const Duration(seconds: 1));
                         var diff = endtime
                             .difference(starttime)
                             .inSeconds; // HINT: you can use .inDays, inHours, .inMinutes or .inSeconds according to your need.
                         print("difftime $diff");
-
-                        coin_deduction(user_id.toString(), vendor_id.toString(),
-                            "", diff.toString(), "video");
                       }
                       Navigator.of(context).pop(true);
                     },
@@ -133,6 +134,7 @@ class CallInvitationPage extends StatelessWidget {
   }
 
   Widget callButton(BuildContext context, bool isVideoCall) {
+    Provider.of<coin_deduction_provider>(context, listen: false);
     var invitees = getInvitesFromTextCtrl(inivites.toString());
     return ZegoStartCallInvitationButton(
       isVideoCall: isVideoCall,
@@ -143,20 +145,26 @@ class CallInvitationPage extends StatelessWidget {
       text: "Press To Call",
       textStyle: const TextStyle(
           fontWeight: FontWeight.bold, color: Colors.white60, fontSize: 18),
-      onPressed: (String code, String message, List<String> errorInvitees) {
+      onPressed:
+          (String code, String message, List<String> errorInvitees) async {
         print("zegolcouddd2");
         starttime = DateTime.now();
         print("Call Start Time =============> $starttime");
-        if (errorInvitees.isNotEmpty) {
-          String userIDs = "";
+        errorInvitees.length;
+        if (errorInvitees.isEmpty) {
+          SharedPreferences pref = await SharedPreferences.getInstance();
+          var userIDs = pref.getString(FirestoreConstants.id);
+          // String userIDs = "";
           for (int index = 0; index < errorInvitees.length; index++) {
             if (index >= 5) {
-              userIDs += '... ';
+              userIDs = '... ';
               break;
             }
             var userID = errorInvitees.elementAt(index);
-            userIDs += userID + ' ';
+            userIDs = userID + ' ';
           }
+
+          print("Length : ${userIDs!.length}");
 
           if (userIDs.isNotEmpty) {
             userIDs = userIDs.substring(0, userIDs.length - 1);
@@ -164,11 +172,15 @@ class CallInvitationPage extends StatelessWidget {
 
             // timer1 = Timer.periodic(Duration(seconds: 5), (timer) {
             //   print("Dateeee" + DateTime.now().toString());
-            //   context.read<coin_deduction_provider>().coin_deduction_list(
-            //       user_id, vendor_id, AppConstants.coin_deduction, "60");
+            context.read<coin_deduction_provider>().coin_deduction_list(userIDs,
+                vendor_id, AppConstants.coin_deduction, "60", starttime);
             //   timer1 = timer;
             // });
+          } else {
+            print("UserIDS empty");
           }
+
+          print("Reached Here");
           var message = 'Is offline';
           if (code.isNotEmpty) {
             message += ' message:$message';
@@ -178,12 +190,18 @@ class CallInvitationPage extends StatelessWidget {
             position: StyledToastPosition.top,
             context: context,
           );
+          print("Reached Here Too");
         } else if (code.isNotEmpty) {
           showToast(
             'message:$message',
             position: StyledToastPosition.top,
             context: context,
           );
+        } else {
+          print("Something Else");
+
+          /// Your IF Condition is not working ... its going in ELSE... hence the api is not being called
+          ///
         }
       },
     );
@@ -206,33 +224,34 @@ class CallInvitationPage extends StatelessWidget {
     return invitees;
   }
 
-  coin_deduction(String userId, String host_id, String coins, String sec,
-      String plan_type) async {
-    String postUrl =
-        "https://hookupindia.in/hookup/ApiController/coinDeduction";
-    print("stringrequest");
-    var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
-    request.fields['user_id'] = userId;
-    request.fields['host_id'] = host_id;
-    request.fields['coins'] = coins;
-    request.fields['sec'] = sec;
-    request.fields['plan_type'] = plan_type;
-    request.send().then((response) {
-      http.Response.fromStream(response).then((onValue) {
-        try {
-          // Navigator.pop(context);
-          print("onValue${onValue.body}");
-          Map mapRes = json.decode(onValue.body);
-          var success = mapRes["status"];
-          var msg = mapRes["message"];
-
-          if (success == "1") {
-            print("resultt $mapRes");
-          } else {}
-        } catch (e) {
-          print("response$e");
-        }
-      });
-    });
-  }
+  // coin_deduction(String userId, String host_id, String coins, String sec,
+  //     DateTime? datetime, String plan_type) async {
+  //   String postUrl =
+  //       "https://hookupindia.in/hookup/ApiController/coinDeduction";
+  //   print("stringrequest");
+  //   var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
+  //   request.fields['user_id'] = userId;
+  //   request.fields['host_id'] = host_id;
+  //   request.fields['coins'] = coins;
+  //   request.fields['sec'] = sec;
+  //   request.fields['plan_type'] = plan_type;
+  //   request.fields['start_time'] = datetime.toString();
+  //   request.send().then((response) {
+  //     http.Response.fromStream(response).then((onValue) {
+  //       try {
+  //         // Navigator.pop(context);
+  //         print("onValue${onValue.body}");
+  //         Map mapRes = json.decode(onValue.body);
+  //         var success = mapRes["status"];
+  //         var msg = mapRes["message"];
+  //
+  //         if (success == "1") {
+  //           print("resultt $mapRes");
+  //         } else {}
+  //       } catch (e) {
+  //         print("response$e");
+  //       }
+  //     });
+  //   });
+  // }
 }
