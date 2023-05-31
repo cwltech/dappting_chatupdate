@@ -75,15 +75,15 @@ class CallInvitationPage extends StatelessWidget {
                       // if (type == "user") {
                       endtime = DateTime.now();
                       //   Future.delayed(const Duration(seconds: 1));
-                      // var diff = endtime
-                      //     .difference(starttime)
-                      //     .inSeconds; // HINT: you can use .inDays, inHours, .inMinutes or .inSeconds according to your need.
-                      print("difftime $endtime");
+                      var diff = endtime
+                          .difference(starttime)
+                          .inSeconds; // HINT: you can use .inDays, inHours, .inMinutes or .inSeconds according to your need.
+                      print("difftime $diff");
                       coinDeduction(
                         user_id.toString(),
                         vendor_id.toString(),
                         AppConstants.coin_deduction,
-                        "60",
+                        diff.toString(),
                         starttime.toString(),
                         "",
                       );
