@@ -1,9 +1,8 @@
 import 'package:dapp/constants/constants.dart';
-import 'package:dapp/providers/coin_deduction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
@@ -134,7 +133,6 @@ class CallInvitationPage extends StatelessWidget {
   }
 
   Widget callButton(BuildContext context, bool isVideoCall) {
-    Provider.of<coin_deduction_provider>(context, listen: false);
     var invitees = getInvitesFromTextCtrl(inivites.toString());
     return ZegoStartCallInvitationButton(
       isVideoCall: isVideoCall,
@@ -172,8 +170,15 @@ class CallInvitationPage extends StatelessWidget {
 
             // timer1 = Timer.periodic(Duration(seconds: 5), (timer) {
             //   print("Dateeee" + DateTime.now().toString());
-            context.read<coin_deduction_provider>().coin_deduction_list(userIDs,
-                vendor_id, AppConstants.coin_deduction, "60", starttime);
+
+            coinDeduction(
+              user_id.toString(),
+              vendor_id.toString(),
+              AppConstants.coin_deduction,
+              "60",
+              starttime.toString(),
+              "",
+            );
             //   timer1 = timer;
             // });
           } else {
@@ -224,34 +229,54 @@ class CallInvitationPage extends StatelessWidget {
     return invitees;
   }
 
-  // coin_deduction(String userId, String host_id, String coins, String sec,
-  //     DateTime? datetime, String plan_type) async {
-  //   String postUrl =
-  //       "https://hookupindia.in/hookup/ApiController/coinDeduction";
-  //   print("stringrequest");
-  //   var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
-  //   request.fields['user_id'] = userId;
-  //   request.fields['host_id'] = host_id;
-  //   request.fields['coins'] = coins;
-  //   request.fields['sec'] = sec;
-  //   request.fields['plan_type'] = plan_type;
-  //   request.fields['start_time'] = datetime.toString();
-  //   request.send().then((response) {
-  //     http.Response.fromStream(response).then((onValue) {
-  //       try {
-  //         // Navigator.pop(context);
-  //         print("onValue${onValue.body}");
-  //         Map mapRes = json.decode(onValue.body);
-  //         var success = mapRes["status"];
-  //         var msg = mapRes["message"];
-  //
-  //         if (success == "1") {
-  //           print("resultt $mapRes");
-  //         } else {}
-  //       } catch (e) {
-  //         print("response$e");
-  //       }
-  //     });
-  //   });
-  // }
+  coinDeduction(String userId, String host_id, String coins, String sec,
+      String dateTime, String plan_type) async {
+    String postUrl =
+        "https://hookupindia.in/hookup/ApiController/coinDeduction";
+    var map = Map<String, dynamic>();
+    map['user_id'] = userId;
+    map['host_id'] = host_id;
+    map['coins'] = coins;
+    map['sec'] = sec;
+    map['start_time'] = dateTime;
+    map['play_type'] = plan_type;
+    final response = await http.post(Uri.parse(postUrl), body: map);
+    if (response.body == "1") print("Coin Dedid --------------> $response");
+    try {
+      if (response.body == "1") print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+// coin_deduction(String userId, String host_id, String coins, String sec,
+//     String dateTime, String plan_type) async {
+//   String postUrl =
+//       "https://hookupindia.in/hookup/ApiController/coinDeduction";
+//   print("stringrequest");
+//
+//   var request = http.MultipartRequest("POST", Uri.parse(postUrl));
+//   request.fields['user_id'] = userId;
+//   request.fields['host_id'] = host_id;
+//   request.fields['coins'] = coins;
+//   request.fields['sec'] = sec;
+//   request.fields['plan_type'] = plan_type;
+//   request.fields['start_time'] = dateTime;
+//   request.send().then((response) {
+//     http.Response.fromStream(response).then((onValue) {
+//       try {
+//         // Navigator.pop(context);
+//         print("onValue${onValue.body}");
+//         Map mapRes = json.decode(onValue.body);
+//         var success = mapRes["status"];
+//         var msg = mapRes["message"];
+//
+//         if (success == "1") {
+//           print("resultt $mapRes");
+//         } else {}
+//       } catch (e) {
+//         print("response$e");
+//       }
+//     });
+//   });
+// }
 }
