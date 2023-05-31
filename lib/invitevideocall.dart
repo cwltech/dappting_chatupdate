@@ -72,14 +72,22 @@ class CallInvitationPage extends StatelessWidget {
                   ElevatedButton(
                     child: const Text("Exit"),
                     onPressed: () {
-                      if (type == "user") {
-                        endtime = DateTime.now();
-                        Future.delayed(const Duration(seconds: 1));
-                        var diff = endtime
-                            .difference(starttime)
-                            .inSeconds; // HINT: you can use .inDays, inHours, .inMinutes or .inSeconds according to your need.
-                        print("difftime $diff");
-                      }
+                      // if (type == "user") {
+                      endtime = DateTime.now();
+                      //   Future.delayed(const Duration(seconds: 1));
+                      // var diff = endtime
+                      //     .difference(starttime)
+                      //     .inSeconds; // HINT: you can use .inDays, inHours, .inMinutes or .inSeconds according to your need.
+                      print("difftime $endtime");
+                      coinDeduction(
+                        user_id.toString(),
+                        vendor_id.toString(),
+                        AppConstants.coin_deduction,
+                        "60",
+                        starttime.toString(),
+                        "",
+                      );
+
                       Navigator.of(context).pop(true);
                     },
                   ),
@@ -171,14 +179,14 @@ class CallInvitationPage extends StatelessWidget {
             // timer1 = Timer.periodic(Duration(seconds: 5), (timer) {
             //   print("Dateeee" + DateTime.now().toString());
 
-            coinDeduction(
-              user_id.toString(),
-              vendor_id.toString(),
-              AppConstants.coin_deduction,
-              "60",
-              starttime.toString(),
-              "",
-            );
+            // coinDeduction(
+            //   user_id.toString(),
+            //   vendor_id.toString(),
+            //   AppConstants.coin_deduction,
+            //   "60",
+            //   starttime.toString(),
+            //   "",
+            // );
             //   timer1 = timer;
             // });
           } else {
