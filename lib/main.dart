@@ -90,6 +90,8 @@ class MyApp extends StatelessWidget {
             create: (context) => hostlist_provider()),
         ChangeNotifierProvider<package_provider>(
             create: (context) => package_provider()),
+        ChangeNotifierProvider<UserProvider>(
+            create: (context) => UserProvider()),
         ChangeNotifierProvider<vip_package_provider>(
             create: (context) => vip_package_provider()),
         ChangeNotifierProvider<regular_package_provider>(
