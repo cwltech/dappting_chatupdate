@@ -79,9 +79,9 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                 builder: (context, value, value2, child) {
               print("valuep$value");
               return value.map.length == 0 && !value.error
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : value.error
-                      ? Text("Opps SOmething went wrong")
+                      ? const Text("Opps SOmething went wrong")
                       : value.map["data"]["userData"] != null
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -222,7 +222,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                             ["profile_image"],
                                                         fit: BoxFit.fill,
                                                       )
-                                                    : Icon(Icons.person),
+                                                    : const Icon(Icons.person),
                                               )),
                                         ],
                                       ),
@@ -234,13 +234,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               top: 20.0, bottom: 8),
                                           child: Center(
                                             child: Text(
                                               value.map["data"]["userData"]
                                                   ["fname"],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   color: Color(0xffCC0000),
                                                   fontSize: 17,
                                                   fontWeight: FontWeight.bold),
@@ -248,12 +248,12 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                           ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               top: 0.0, bottom: 8),
                                           child: Center(
                                             child: Text(
                                               "ID: ${value.map["data"]["userData"]["unique_id"]}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13,
                                               ),
@@ -339,7 +339,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "total_likes"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 12,
                                                       ),
@@ -426,7 +426,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                     children: [
                                                       Text(
                                                         "Total Gift ${value2.map["data"]["count_recieve_gift"].toString()}",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 12,
                                                         ),
@@ -451,44 +451,65 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                       giftshow(context,
                                           value.map["data"]["userData"]);
                                     },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.85,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFFCC0000),
-                                            Color(0xFFD02525),
-                                            Color(0xFFD23737),
-                                          ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                        //color:Color(0xff07D3DF).withOpacity(0.3),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            Icons.card_giftcard,
-                                            color: Colors.white,
-                                            size: 20,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.85,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Color(0xFFCC0000),
+                                                Color(0xFFD02525),
+                                                Color(0xFFD23737),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            //color:Color(0xff07D3DF).withOpacity(0.3),
                                           ),
-                                          Align(
-                                            alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              Icon(
+                                                Icons.card_giftcard,
+                                                color: Colors.white,
+                                                size: 20,
+                                              ),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  " Check your Gifts",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Align(
+                                            alignment: Alignment.center,
                                             child: Text(
-                                              " Check your Gifts",
+                                              "Don't Cut The User's Call From Your Side If You Want To Get Your Points.",
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Colors.black,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -521,7 +542,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                             ["live_status"] ==
                                                         "1"
                                                     ? Colors.green
-                                                    : Color(0xffCC0000),
+                                                    : const Color(0xffCC0000),
                                                 fontSize: 12),
                                           ),
                                           Transform.scale(
@@ -607,13 +628,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "count_recieve_gift"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .arrow_forward_ios_rounded,
                                                       color: Colors.black,
@@ -665,13 +686,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                 "total_gift_coins"]
                                                             .toString() ??
                                                         "",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 12),
                                                   ),
-                                                  Icon(
+                                                  const Icon(
                                                     Icons
                                                         .arrow_forward_ios_rounded,
                                                     color: Colors.black,
@@ -735,13 +756,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "total_calls"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .arrow_forward_ios_rounded,
                                                       color: Colors.black,
@@ -793,13 +814,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "total_video_coins"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 12),
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .arrow_forward_ios_rounded,
                                                       color: Colors.black,
@@ -864,13 +885,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "total_amount_in_wallet"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .arrow_forward_ios_rounded,
                                                       color: Colors.black,
@@ -922,13 +943,13 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                                   "total_coins"]
                                                               .toString() ??
                                                           "",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .arrow_forward_ios_rounded,
                                                       color: Colors.black,
@@ -965,7 +986,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                                   .toString() ??
                                               "",
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -1052,7 +1073,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                                 ),
                               ],
                             )
-                          : Center(child: CircularProgressIndicator());
+                          : const Center(child: CircularProgressIndicator());
             }),
           ),
         )
@@ -1087,7 +1108,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
     return showModalBottomSheet<void>(
       backgroundColor: Colors.white.withOpacity(0.85),
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(25),
         ),
@@ -1100,7 +1121,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
           color: Colors.transparent,
           child: Column(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Gift Received",
@@ -1143,7 +1164,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
           return WillPopScope(
             onWillPop: () async => true,
             child: AlertDialog(
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20))),
               title: const Text(
                 'Complete your Profile first !!..',
@@ -1158,7 +1179,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                     height: 42,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: Color(0xff07D3DF),
+                      color: const Color(0xff07D3DF),
                     ),
                     child: TextButton(
                       onPressed: () {
@@ -1177,7 +1198,7 @@ class _female_d extends State<female_dash> with WidgetsBindingObserver {
                               builder: (context) => female_edit_profile()),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         "Complete Profile",
                         textAlign: TextAlign.center,
                         style: TextStyle(

@@ -1,21 +1,13 @@
 import 'dart:convert';
+
+import 'package:dapp/female_user/female_profile.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:dapp/chatmessage.dart';
-import 'package:dapp/demo.dart';
-import 'package:dapp/female_user/chat_tab_female.dart';
-import 'package:dapp/female_user/female_profile.dart';
-import 'package:dapp/hotpage.dart';
-import 'package:dapp/myprofile.dart';
-import 'package:dapp/newhot.dart';
-import 'package:dapp/pages/chat_list.dart';
-import 'package:dapp/profile_dashboard.dart';
-import 'package:dapp/show_profile.dart';
-import 'package:dapp/vipaccess.dart';
-import 'package:dapp/wallet.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'female.chat.list.dart';
 import 'female_dashboard.dart';
 
 class female_home extends StatefulWidget {
@@ -30,7 +22,7 @@ class _home extends State<female_home> with WidgetsBindingObserver {
   List<Widget> tabs = [
     female_dash(),
     // chat_tab(),
-    chat_home_list(
+    const ChatHomeList(
       type: "vendor",
     ),
     female_profile(),
@@ -114,7 +106,8 @@ class _home extends State<female_home> with WidgetsBindingObserver {
           currentIndex: currentTabIndex,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Color(0xffCC0000),
-          unselectedItemColor: Colors.white, // Fixed
+          unselectedItemColor: Colors.white,
+          // Fixed
           backgroundColor: Color(0xff07D3DF),
           items: const [
             BottomNavigationBarItem(

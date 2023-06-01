@@ -11,7 +11,9 @@ class apperance_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> apperance_list() async {
@@ -56,7 +58,9 @@ class ethencity_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> ethencity_list() async {
@@ -101,7 +105,9 @@ class childrenhave_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> children_list() async {
@@ -146,7 +152,9 @@ class children_want_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> children_want_list() async {
@@ -191,7 +199,9 @@ class body_type_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> body_type_list() async {
@@ -235,7 +245,9 @@ class drink_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> drink_list() async {
@@ -279,7 +291,9 @@ class education_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> eductaion_list() async {
@@ -324,7 +338,9 @@ class english_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> english_list() async {
@@ -369,7 +385,9 @@ class eye_color_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> eye_color_list() async {
@@ -413,7 +431,9 @@ class hair_color_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> hair_color_list() async {
@@ -458,7 +478,9 @@ class height_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> height_list() async {
@@ -502,7 +524,9 @@ class maritial_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> maritial_list() async {
@@ -546,7 +570,9 @@ class occupation_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> occupation_list() async {
@@ -591,7 +617,9 @@ class religion_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> religion_list() async {
@@ -635,7 +663,9 @@ class smoke_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> smoke_list() async {
@@ -679,7 +709,9 @@ class starsign_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> star_list() async {
@@ -723,7 +755,9 @@ class weight_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> weight_list() async {
@@ -761,17 +795,72 @@ class weight_provider with ChangeNotifier {
   }
 }
 
+/* Chat User List API Call */
+class UserProvider with ChangeNotifier {
+  Map<String, dynamic> map = {};
+  bool error = false;
+  String errormessage = '';
+
+  Map<String, dynamic> get _map => map;
+
+  bool get _error => error;
+
+  String get _errormessage => errormessage;
+
+  Future<void> userChatList(String user_id) async {
+    String postUrl = "https://hookupindia.in/hookup/ApiController/userChatList";
+    print("stringrequest");
+    var request = http.MultipartRequest("POST", Uri.parse(postUrl));
+    request.send().then((response) async {
+      // SharedPreferences preferences = await SharedPreferences.getInstance();
+      // preferences.setString(FirestoreConstants.idTo, user_id);
+      request.fields['user_id'] = user_id;
+      print("User Chat List ID (REELS)🥬🥬🥬🥬🥬🥬 ========> $user_id");
+      http.Response.fromStream(response).then((onValue) {
+        if (response.statusCode == 200) {
+          try {
+            map = json.decode(onValue.body);
+            print(
+                "User Chat Lists(JSON DATA) 🥦🥦🥦🥦🥦🥦🥦🥦============> $map");
+            error = false;
+          } catch (e) {
+            error = true;
+            print("response$e");
+            errormessage = e.toString();
+            map = {};
+          }
+        } else {
+          error = true;
+          errormessage = "Please Check Your Internet Connection";
+          map = {};
+        }
+        notifyListeners();
+      });
+    });
+  }
+
+  void initializedvalue() {
+    error = false;
+    errormessage = " ";
+    map = {};
+    notifyListeners();
+  }
+}
+
 class hostlist_provider with ChangeNotifier {
   Map<String, dynamic> map = {};
   bool error = false;
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
   Future<void> host_list(String user_id) async {
-    String postUrl = "https://hookupindia.in/hookup/ApiController/userHostList";
+    String postUrl =
+        "https://hookupindia.in/hookup/ApiController/userHostChatList";
     print("stringrequest");
     var request = http.MultipartRequest("POST", Uri.parse(postUrl));
     request.send().then((response) async {
