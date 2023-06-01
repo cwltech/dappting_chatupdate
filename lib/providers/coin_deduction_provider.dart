@@ -9,19 +9,23 @@ class coin_deduction_provider with ChangeNotifier {
   String errormessage = '';
 
   Map<String, dynamic> get _map => map;
+
   bool get _error => error;
+
   String get _errormessage => errormessage;
 
-  Future<void> coin_deduction_list(
-      String userId, String host_id, String coins, String sec) async {
+  Future<void> coin_deduction_list(String userId, String host_id, String coins,
+      String sec, String startTime) async {
     String postUrl =
         "https://hookupindia.in/hookup/ApiController/coinDeduction";
+
     print("stringrequest");
     var request = new http.MultipartRequest("POST", Uri.parse(postUrl));
     request.fields['user_id'] = userId;
     request.fields['host_id'] = host_id;
     request.fields['coins'] = coins;
     request.fields['sec'] = sec;
+    request.fields['start_time'] = startTime;
     request.send().then((response) {
       http.Response.fromStream(response).then((onValue) {
         if (response.statusCode == 200) {
