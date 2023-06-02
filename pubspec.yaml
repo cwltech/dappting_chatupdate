@@ -79,6 +79,7 @@ dependencies:
   blinking_text: ^1.0.2
   is_lock_screen: ^2.0.0
   webview_flutter: ^3.0.1
+  flutter_inappwebview: ^5.7.2+3
 
 
   #zego_express_engine: ^2.22.0

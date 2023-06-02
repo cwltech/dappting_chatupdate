@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Webview.profile.view.dart';
 import '../invitevideocall.dart';
 import 'female.edit.profile.dart';
-import 'female.profile.setting.dart';
 
 class female_profile extends StatefulWidget {
   @override
@@ -159,11 +159,20 @@ class _female_profile extends State<female_profile> {
                                                 child: Image.asset(
                                                     "assets/profile_eyecircle.png")),
                                             // Front image
-                                            SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                                child: Image.asset(
-                                                    "assets/ssetting.png")),
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {});
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const FemaleProfileViewWebView()));
+                                              },
+                                              child: SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: Image.asset(
+                                                      "assets/ssetting.png")),
+                                            ),
                                           ],
                                         ),
                                       ],

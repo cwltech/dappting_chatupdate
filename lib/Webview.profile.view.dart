@@ -5,14 +5,15 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EditProfileSetting extends StatefulWidget {
-  const EditProfileSetting({super.key});
+class FemaleProfileViewWebView extends StatefulWidget {
+  const FemaleProfileViewWebView({super.key});
 
   @override
-  State<EditProfileSetting> createState() => _EditProfileSettingState();
+  State<FemaleProfileViewWebView> createState() =>
+      _FemaleProfileViewWebViewState();
 }
 
-class _EditProfileSettingState extends State<EditProfileSetting> {
+class _FemaleProfileViewWebViewState extends State<FemaleProfileViewWebView> {
   // var user_id = "";
   late InAppWebViewController inAppWebViewController;
 
@@ -37,7 +38,7 @@ class _EditProfileSettingState extends State<EditProfileSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Profile Setting"),
+          title: const Text("Profile View"),
         ),
         body: Consumer<profile_details_provider>(
           builder: (BuildContext context, state, Widget? child) {
@@ -52,7 +53,7 @@ class _EditProfileSettingState extends State<EditProfileSetting> {
                       )),
                   initialUrlRequest: URLRequest(
                     url: Uri.parse(
-                        "https://hookupindia.in/webview/edit-profile.php?id=${state.map["data"]["userData"]["user_id"]}"),
+                        "https://hookupindia.in/webview/profile.php?id=${state.map["data"]["userData"]["user_id"]}"),
                   ),
                   onWebViewCreated: (InAppWebViewController controller) {
                     inAppWebViewController = controller;
